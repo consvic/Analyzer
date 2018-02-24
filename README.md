@@ -19,5 +19,6 @@ Syntactic Analysis
 or
 
 $ make
+
 $ ./compiladores < test1.txt
 
