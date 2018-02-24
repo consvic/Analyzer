@@ -16,9 +16,9 @@ Syntactic Analysis
 * gcc tinyC.tab.c -o "Nombre del ejecutable" -lfl
 * ./"Nombre del ejecutable" < "Archivos de Prueba"(test1.txt,test2.txt,test3.txt,test4.txt)
 
-or
+o
 
-$ make
+  $ make
 
-$ ./compiladores < test1.txt
+  $ ./compiladores < test1.txt
 
