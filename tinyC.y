@@ -138,9 +138,12 @@ void yyerror (GHashTable * theTable_p, const char* const message){
 
 /* BISON DOES NOT DEFINE THE MAIN ENTRY POINT SO DEFINE IT HERE */
 int main (){
-  GHashTable * theTable_p;
+    GHashTable * theTable_p; //Declaration of the hash table
+  /* We create the hash table, using a string as the hash key.
+   * We use new full to handle memory allocation through the method FreeItem.
+   */
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
-  yyparse(theTable_p);
-  PrintTable(theTable_p);
-DestroyTable(theTable_p);
+  yyparse(theTable_p); //We start parsing.
+  PrintTable(theTable_p); //Print the contents of the table.
+  DestroyTable(theTable_p); //Finally we eliminate the elements of theTable_p (hash table)
 }
