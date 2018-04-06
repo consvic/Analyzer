@@ -1,5 +1,6 @@
 # Analyzer
 
+#### Syntactic and Semantic Analysis
 ## Autores
 Allan Francisco Julian Novoa A01361651
 
@@ -7,7 +8,6 @@ Cesar Guadarrama cantu A01364853
 
 Constanza Lievanos Sanchez A01361506
 
-Syntactic and Semantic Analysis
 
 ### Compilación
 
