@@ -7,9 +7,9 @@ Cesar Guadarrama cantu A01364853
 
 Constanza Lievanos Sanchez A01361506
 
-Syntactic Analysis
+Syntactic and Semantic Analysis
 
-### Compilacion
+### Compilación
 
 * flex Scanner.l 				-.Genera el archivo lex.yy.c
 * bison tinyC.y 				-.Genera el archivo tinyC.tab.c
