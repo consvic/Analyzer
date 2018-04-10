@@ -18,7 +18,6 @@ void yyerror (GHashTable * theTable_p, const char* const message);
 
 void typeError();
 
-void cohersion();
 %}
 
 
