@@ -981,12 +981,12 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 #line 75 "Scanner.l"
-{ return FLOAT_NUM; }
+{ return FLOAT; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 76 "Scanner.l"
-{ return INT_NUM; }
+{ return INTEGER; }
 	YY_BREAK
 /* Gramatica para identificadores */
 case 34:

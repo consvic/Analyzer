@@ -1,7 +1,7 @@
 /*
 Allan Francisco Julian Novoa A01361651
 Cesar Guadarrama cantu A01364853
-Constanza lievanos Sanchez A01361506
+Constanza lievanos Sanchez A01361015
 
 */
 
@@ -72,8 +72,8 @@ leter [a-zA-Z_]
 
 	/* Gramaticas para numeros enteros y otro para decimales */
 
--?(({d}*\.{d}+)([eE][+-]?{d}+)?)  { return FLOAT_NUM; }
--?({d}+)						  { return INT_NUM; }
+-?(({d}*\.{d}+)([eE][+-]?{d}+)?)  { return FLOAT; }
+-?({d}+)						  { return INTEGER; }
 
 
 	/* Gramatica para identificadores */
