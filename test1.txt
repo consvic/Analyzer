@@ -1,5 +1,4 @@
-/* This is the "simple" version of the test 
-   program */
+/* This is the "simple" version of the test program */
 /* Definitions go first */
 
 int j;
