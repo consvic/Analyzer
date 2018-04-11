@@ -104,7 +104,7 @@ stmt        : IF exp THEN stmt
                                             printf("Linea %d con tipos %d %d\n",lineNum, $1->type, $3->type);
 
                                                 if(($1->type == real) && ($3->type == integer)) {
-                                                    /*Aqui se hace la cohersion*/
+                                                    /*Aqui se hace la coersion*/
                                                     printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
                                                     $3->type = real;
                                                       /*Pegar codigo*/
@@ -113,6 +113,7 @@ stmt        : IF exp THEN stmt
                                                          } else  if(($1->type == integer)&& ($3->type == integer)) {
                                                                 /*Pegar codigo*/
                                                              } else {
+                                                               /*Si la variable es integer y la expresión float hay un type error*/
                                                                  typeError();
                                                              }
 
