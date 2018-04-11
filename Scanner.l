@@ -24,8 +24,8 @@ leter [a-zA-Z_]
 
 %%
 
-[\n\r]+ 						  { lineNum++; }
-[ \t]+							  {		       }
+[\n]+ 						  { lineNum++; }
+[ \t\r]+							  {		       }
 
 
 
