@@ -9,12 +9,20 @@
 #include <glib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "UserDefined.h"
 #include "types.h"
 extern int lineNum;
 
   /* Declaramos las Funciones */
+  
 void yyerror (GHashTable * theTable_p, const char* const message);
+
+/*
+Variables para saber si hubo error de que no se delcaro una variable
+*/
+int x = 0;
+//int varError =  0;
 
 void typeError();
 
@@ -282,8 +290,9 @@ variable    : ID
                                         {
                                               /* Check if the variable is in the symbol table */
                                               entry_p node = SymbolLookUp(theTable_p,$1);
-                                              if(node == NULL){
-                                                    printf("\nWarning! In line %d: Undeclared variable %s\n",lineNum,$1);
+                                              if(node == NULL){ 
+                                                    x = 1;
+                                                    printf("Error! In line %d: Undeclared variable %s\n",lineNum,$1);
                                               }else{
                                                     $$ = node;
                                               }
@@ -309,6 +318,10 @@ int main (){
   GHashTable * theTable_p;
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
   yyparse(theTable_p);
-  PrintTable(theTable_p);
+  if(x != 1)
+  {
+    PrintTable(theTable_p);
+  }
+
   DestroyTable(theTable_p);
 }
