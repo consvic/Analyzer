@@ -5,27 +5,32 @@
   Cesar Guadarrama cantu A01364853
   Constanza Lievanos Sanchez A01361015
 
+
   */
 #include <glib.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "UserDefined.h"
 #include "types.h"
 extern int lineNum;
-
-  /* Declaramos las Funciones */
-  
-void yyerror (GHashTable * theTable_p, const char* const message);
 
 /*
 Variables para saber si hubo error de que no se delcaro una variable
 */
 int x = 0;
-//int varError =  0;
+
+/*
+*   Arreglo en donde se guarda el codigo
+*/
+GPtrArray *          code;	
+
+/* Declaramos las Funciones */
+void yyerror (GHashTable * theTable_p, const char* const message);
 
 void typeError();
 
+void cohersion();
 %}
 
 
@@ -34,8 +39,11 @@ void typeError();
     float f;
     int i;
     entry_p  symTab;
+    GPtrArray *	list;
 }
+
 %parse-param{GHashTable * theTable_p}
+
 /*Declaramos los tokens*/
 %token <s>ID
 %token SEMI
@@ -65,13 +73,18 @@ void typeError();
 %token MINUS
 %token TIMES
 %token DIV
-%type <i> type
+%token INT_NUM
+%token FLOAT_NUM
+%type <i> type m
 %type <symTab> variable factor term simple_exp exp stmt_seq block stmt
+%type <list> n
+
 
 %left MINUS PLUS
 %left TIMES DIV
 
 %%
+
 
 //Declaramos la Gramatica
 program     : var_dec stmt_seq     { printf ("No errors in the line\n");}
@@ -100,20 +113,46 @@ type        : INTEGER 					{ $$ = integer;}
             | FLOAT 					  { $$ = real;}
             ;
 
-stmt_seq    : stmt_seq stmt
-            |
+stmt_seq    : stmt_seq stmt m {
+                                                    $$ = malloc(sizeof(entry_p));     
+                                                                     
+                                                      $$->list_next = cloneList($2->list_next);                                                      
+                                                      backPatch(code,$2->list_next,$3);
+                                
+                            }
+
+            |                   {
+            
+                                }
             ;
 
-stmt        : IF exp THEN stmt
-            | IF exp THEN stmt ELSE stmt
-            | WHILE exp DO stmt
+stmt        : IF exp THEN m stmt              {
+                                                      $$ = malloc(sizeof(entry_p));
+                                                      backPatch(code,$2->list_true,$4);
+                                                      $$->list_next = mergeList($2->list_false,$5->list_next);
+                                            }
+            | IF exp THEN m stmt n m stmt     {
+                                                      $$ = malloc(sizeof(entry_p));
+                                                      backPatch(code,$2->list_true,$4);
+                                                      backPatch(code,$2->list_false,$7);
+                                                      $$->list_next=mergeList($5->list_next,mergeList($6,$8->list_next));
+                                            }
+            | WHILE m exp DO m stmt            {
+                                                      backPatch(code,$3->list_true,$5);
+                                                      $$ = malloc(sizeof(entry_p));                                                      
+                                                      $$->list_next = cloneList($3->list_false);                                                      
+                                                      union result res;
+                                                      res.address = $2;
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                            }
             | variable ASSIGN exp SEMI
                                         {
+                                        
                                             printf("Linea %d con tipos %d %d\n",lineNum, $1->type, $3->type);
 
                                                 if(($1->type == real) && ($3->type == integer)) {
-                                                    /*Aqui se hace la coersion*/
-                                                    printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
+                                                    /*Aqui se hace la cohersion*/
+                                                    cohersion();
                                                     $3->type = real;
                                                       /*Pegar codigo*/
                                                 } else  if(($1->type == real) && ($3->type == real)) {
@@ -121,30 +160,102 @@ stmt        : IF exp THEN stmt
                                                          } else  if(($1->type == integer)&& ($3->type == integer)) {
                                                                 /*Pegar codigo*/
                                                              } else {
-                                                               /*Si la variable es integer y la expresión float hay un type error*/
                                                                  typeError();
                                                              }
 
-
+                                                      union result res;
+                                                      res.entry = $1;
+                                                      g_ptr_array_add(code,newQuad("assign",res,$3,NULL));                                                      
+                                                      
+                                                      $$->list_next = g_ptr_array_new();   
                                         }
-            | READ LPAREN variable RPAREN SEMI
-            | WRITE LPAREN exp RPAREN SEMI
-            | block
+            | READ LPAREN variable RPAREN SEMI  {
+                                                      union result resWrite;
+                                                      resWrite.entry = $3;
+                                                      g_ptr_array_add(code,newQuad("read",resWrite,NULL,NULL));
+                                                      $$ = malloc(sizeof(entry_p));
+                                                      $$->list_next = g_ptr_array_new();
+                                                }
+            | WRITE LPAREN exp RPAREN SEMI      {
+                                                      union result resRead;
+                                                      resRead.entry = $3;                                                                                                      
+                                                      g_ptr_array_add(code,newQuad("write",resRead,NULL,NULL)); 
+                                                      $$ = malloc(sizeof(entry_p));
+                                                      $$->list_next = g_ptr_array_new();
+                                                }
+            | block                             {
+                                                    $$ = $1;
+                                                }
+            ;
+            
+m           :                                   {
+                                                    $$ = code->len;
+                                                }
             ;
 
-block       : LBRACE stmt_seq RBRACE
+n           : ELSE 					            {
+
+									           $$ = newList(code->len);
+                                               union result res;
+									           res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+									           g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                               
+								                }
+            ;
+            
+
+block       : LBRACE stmt_seq RBRACE            {                                                          
+                                                      $$ = $2;                                                      
+                                                }
             ;
 
-exp         : simple_exp LT simple_exp
-            | simple_exp EQ simple_exp
-            | simple_exp GT simple_exp
-            | simple_exp GE simple_exp
-            | simple_exp LE simple_exp
-            | simple_exp NE simple_exp
+exp         : simple_exp LT simple_exp          {                                                      
+                                                      $$->type = integer;
+                                                      $$->list_true = newList(code->len);                                                      
+                                                      $$->list_false = newList(code->len+1); 
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("LT",res,$1,$3));
+
+                                                      union result res2;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
+            | simple_exp EQ simple_exp          {
+                                                      $$->type = integer;
+                                                      $$->list_true = newList(code->len);
+                                                      $$->list_false = newList(code->len+1);
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("EQ",res,$1,$3));
+
+                                                      union result res2;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
+            | simple_exp GT simple_exp          {
+
+                                                      $$->type = integer;
+                                                      $$->list_true = newList(code->len);
+                                                      $$->list_false = newList(code->len+1);
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("GT",res,$1,$3));
+
+                                                      union result res2;
+                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
             | simple_exp
-                                      {
+                                                {
                   											$$ = $1;
-                  										}
+                  						        }
             ;
 
 simple_exp  : simple_exp PLUS term
@@ -167,9 +278,13 @@ simple_exp  : simple_exp PLUS term
                                                               $$->type = real;
                                                             }
                                                             else{
+                                                                 
                                                                   $$->type = integer;
                                                             }
                                                       }
+                                                      union result res;
+                                                      res.entry = $$;
+                                                      g_ptr_array_add(code,newQuad("sum",res,$1,$3));
                                           }
 
             | simple_exp MINUS term
@@ -192,16 +307,20 @@ simple_exp  : simple_exp PLUS term
                                                               $$->type = real;
                                                             }
                                                             else{
+                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
+                                                      union result res;
+                                                      res.entry = $$;
+                                                      g_ptr_array_add(code,newQuad("minus",res,$1,$3));
 
 
                                           }
             | term
                                           {
                     												$$ = $1;
-                    											}
+                                          }
             ;
 
 term        : term TIMES factor
@@ -223,10 +342,13 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
+                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
-
+                                                        union result res;
+                                                      res.entry = $$;
+                                                      g_ptr_array_add(code,newQuad("mult",res,$1,$3));
 
                                           }
             | term DIV factor
@@ -249,11 +371,14 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
+                                                                  printf("HOLI");
                                                                   printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
                                                                   $$->type = real;
                                                             }
                                                       }
-
+                                                      union result res;
+                                                      res.entry = $$;
+                                                      g_ptr_array_add(code,newQuad("div",res,$1,$3));
 
                                           }
 			      | factor
@@ -304,6 +429,7 @@ variable    : ID
 
 /*Incluimos a lex.yy.c*/
 #include "lex.yy.c"
+#include<ctype.h>
 
 /* BISON DOES NOT IMPLEMENT YYERROR, SO DEFINE IT HERE */
 void yyerror (GHashTable * theTable_p, const char* const message){
@@ -313,15 +439,22 @@ void typeError(){
     printf ("Type Error in line %d\n",lineNum);
 }
 
+void cohersion(){
+    printf ("We use cohersion here in line %d\n",lineNum);
+}
+
 /* BISON DOES NOT DEFINE THE MAIN ENTRY POINT SO DEFINE IT HERE */
 int main (){
   GHashTable * theTable_p;
   theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
+  code = g_ptr_array_new();
   yyparse(theTable_p);
   if(x != 1)
   {
     PrintTable(theTable_p);
+    //PrintCode(code);
   }
 
   DestroyTable(theTable_p);
 }
+
