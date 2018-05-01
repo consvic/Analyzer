@@ -2,6 +2,8 @@
 #include <glib.h>
 #include <string.h>
 #include "types.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
 *
@@ -67,6 +69,9 @@ typedef struct tableEntry_{
    enum myTypes	type;                          /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
    union val        value;       /**< Value of the symbol table element */
+    GPtrArray *		list_true;
+	GPtrArray *		list_false;
+	GPtrArray *		list_next;
 
 }tableEntry;
 
@@ -263,7 +268,7 @@ void InsertSymbolTemp(GHashTable *theTable_p, char * name, enum myTypes type);
 * @endcode
 *
 */
-int FreeItem (entry_p theEntry_p);
+void FreeItem(gpointer my_entry);
 
 /**
 *
@@ -384,3 +389,35 @@ entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes ty
 *
 */
 void SymbolUpdate(GHashTable *theTable_p, char * name, enum myTypes type, union val value);
+//Recibimos el Result
+union result{
+	int 	address;
+	entry_p entry;
+};
+//Definimos la estructura del Quad
+typedef struct quad_{
+	char *			op;
+	union result	result;
+	entry_p 		arg1;
+	entry_p			arg2;
+}quad;
+
+
+typedef struct quad_ * quad_p;
+
+quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2);
+/*Arreglo de las direcciones*/
+GPtrArray * newList(int add);
+//Clone de la lista
+GPtrArray * cloneList(GPtrArray * list);
+//Merge de las listas
+GPtrArray * mergeList(GPtrArray * list1, GPtrArray * list2);
+//Backpatch
+void backPatch(GPtrArray * code, GPtrArray * list, int add);
+
+void PrintQuad(quad_p myQuad);								/*********************/
+															/*                   */
+int PrintCodeHelper(gpointer data, gpointer user_data);		/* Print the Code    */	
+															/* generated         */
+int PrintCode(GPtrArray *code);	
+void interprete(GHashTable * theTable_p,GPtrArray *code);
