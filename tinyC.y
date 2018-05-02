@@ -139,10 +139,10 @@ stmt        : IF exp THEN m stmt              {
                                             }
             | WHILE m exp DO m stmt            {
                                                     //  backPatch(code,$3->list_true,$5);
-                                                      $$ = malloc(sizeof(entry_p));
-                                                      $$->list_true = NULL;
-                                                      $$->list_false = NULL;
-                                                      $$->list_next = cloneList($3->list_false);
+                                                    //  $$ = malloc(sizeof(entry_p));
+                                                      //$$->list_true = NULL;
+                                                    //  $$->list_false = NULL;
+                                                      //$$->list_next = cloneList($3->list_false);
                                                       union result res;
                                                       res.address = $2;
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
@@ -217,10 +217,10 @@ block       : LBRACE stmt_seq RBRACE            {
             ;
 
 exp         : simple_exp LT simple_exp          {
-                                                      $$ = malloc(sizeof(entry_p));
-                                                      $$->list_true = NULL;
-                                                      $$->list_false = NULL;
-                                                      $$->list_next = NULL;
+                                                      //$$ = malloc(sizeof(entry_p));
+                                                      //$$->list_true = NULL;
+                                                      //$$->list_false = NULL;
+                                                      //$$->list_next = NULL;
                                                       $$->type = integer;
                                                       //$$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
@@ -231,14 +231,14 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("LT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp EQ simple_exp          {
-                                                      $$ = malloc(sizeof(entry_p));
-                                                      $$->list_true = NULL;
-                                                      $$->list_false = NULL;
-                                                      $$->list_next = NULL;
+                                                      //$$ = malloc(sizeof(entry_p));
+                                                    //  $$->list_true = NULL;
+                                                      //$$->list_false = NULL;
+                                                    //  $$->list_next = NULL;
                                                       $$->type = integer;
                                                       //$$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
@@ -249,18 +249,18 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("EQ",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp GT simple_exp          {
-                                                      $$ = malloc(sizeof(entry_p));
+                                                      //$$ = malloc(sizeof(entry_p));
                                                       $$->list_true = NULL;
                                                       $$->list_false = NULL;
                                                       $$->list_next = NULL;
                                                       $$->type = integer;
                                                       $$->type = integer;
-                                                      $$->list_true = newList(code->len);
-                                                      $$->list_false = newList(code->len+1);
+                                                      //$$->list_true = newList(code->len);
+                                                      //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
                                                       union result res;
@@ -268,8 +268,8 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("GT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp
                                                 {
@@ -326,7 +326,6 @@ simple_exp  : simple_exp PLUS term
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
@@ -362,7 +361,6 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
@@ -391,7 +389,7 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  printf("HOLI");
+                                                                  
                                                                   printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
                                                                   $$->type = real;
                                                             }

@@ -1386,10 +1386,10 @@ yyreduce:
 #line 140 "tinyC.y" /* yacc.c:1646  */
     {
                                                     //  backPatch(code,$3->list_true,$5);
-                                                      (yyval.symTab) = malloc(sizeof(entry_p));
-                                                      (yyval.symTab)->list_true = NULL;
-                                                      (yyval.symTab)->list_false = NULL;
-                                                      (yyval.symTab)->list_next = cloneList((yyvsp[-3].symTab)->list_false);
+                                                    //  $$ = malloc(sizeof(entry_p));
+                                                      //$$->list_true = NULL;
+                                                    //  $$->list_false = NULL;
+                                                      //$$->list_next = cloneList($3->list_false);
                                                       union result res;
                                                       res.address = (yyvsp[-4].i);
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
@@ -1494,10 +1494,10 @@ yyreduce:
   case 20:
 #line 219 "tinyC.y" /* yacc.c:1646  */
     {
-                                                      (yyval.symTab) = malloc(sizeof(entry_p));
-                                                      (yyval.symTab)->list_true = NULL;
-                                                      (yyval.symTab)->list_false = NULL;
-                                                      (yyval.symTab)->list_next = NULL;
+                                                      //$$ = malloc(sizeof(entry_p));
+                                                      //$$->list_true = NULL;
+                                                      //$$->list_false = NULL;
+                                                      //$$->list_next = NULL;
                                                       (yyval.symTab)->type = integer;
                                                       //$$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
@@ -1508,8 +1508,8 @@ yyreduce:
                                                       g_ptr_array_add(code,newQuad("LT",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
 #line 1515 "compiladores.tab.c" /* yacc.c:1646  */
     break;
@@ -1517,10 +1517,10 @@ yyreduce:
   case 21:
 #line 237 "tinyC.y" /* yacc.c:1646  */
     {
-                                                      (yyval.symTab) = malloc(sizeof(entry_p));
-                                                      (yyval.symTab)->list_true = NULL;
-                                                      (yyval.symTab)->list_false = NULL;
-                                                      (yyval.symTab)->list_next = NULL;
+                                                      //$$ = malloc(sizeof(entry_p));
+                                                    //  $$->list_true = NULL;
+                                                      //$$->list_false = NULL;
+                                                    //  $$->list_next = NULL;
                                                       (yyval.symTab)->type = integer;
                                                       //$$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
@@ -1531,8 +1531,8 @@ yyreduce:
                                                       g_ptr_array_add(code,newQuad("EQ",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
 #line 1538 "compiladores.tab.c" /* yacc.c:1646  */
     break;
@@ -1540,14 +1540,14 @@ yyreduce:
   case 22:
 #line 255 "tinyC.y" /* yacc.c:1646  */
     {
-                                                      (yyval.symTab) = malloc(sizeof(entry_p));
+                                                      //$$ = malloc(sizeof(entry_p));
                                                       (yyval.symTab)->list_true = NULL;
                                                       (yyval.symTab)->list_false = NULL;
                                                       (yyval.symTab)->list_next = NULL;
                                                       (yyval.symTab)->type = integer;
                                                       (yyval.symTab)->type = integer;
-                                                      (yyval.symTab)->list_true = newList(code->len);
-                                                      (yyval.symTab)->list_false = newList(code->len+1);
+                                                      //$$->list_true = newList(code->len);
+                                                      //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
                                                       union result res;
@@ -1555,8 +1555,8 @@ yyreduce:
                                                       g_ptr_array_add(code,newQuad("GT",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
 
                                                       union result res2;
-                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
 #line 1562 "compiladores.tab.c" /* yacc.c:1646  */
     break;
