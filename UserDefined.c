@@ -42,7 +42,7 @@ void InsertSymbolTemp(GHashTable *theTable_p, char * name, enum myTypes type){
     entry_p node = malloc(sizeof(struct tableEntry_));
 	node->name_p = name;
 	node->type = type;
-
+  //node->lineNumber = 0;
 	/* Initialize every variable as 0*/
 	if(type == real)
 		node->value.r_value = 0.0;
@@ -136,65 +136,68 @@ entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes ty
 	SymbolUpdate(theTable_p,temp,type,value);
 	return SymbolLookUp(theTable_p,temp);
 }
-//Quad
+/* Generate and return the structure used to represent each of the instructions*/
 quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2){
-	quad_p myQuad = malloc(sizeof(quad_p));
-	myQuad->op = strdup(op);
-	myQuad->result = res;
-	myQuad->arg1 = arg1;	//Can be null
-	myQuad->arg2 = arg2;	//Can be null
-	return myQuad;
+  quad_p myQuad = malloc(sizeof(quad_p));
+  myQuad->op = strdup(op);
+  myQuad->result = res;
+  myQuad->arg1 = arg1;	//Can be null
+  myQuad->arg2 = arg2;	//Can be null
+  return myQuad;
 }
 
-//Array of the address
-
+/* Generates an array where the address is added */
 GPtrArray * newList(int add){
-	GPtrArray * myList = g_ptr_array_new();	
-	g_ptr_array_add(myList,(gpointer)(long)add);
-	return myList;
+  GPtrArray * myList = g_ptr_array_new();
+  g_ptr_array_add(myList,(gpointer)(long)add);
+  return myList;
 }
 
-//Funcion backpath
+/* Takes the addresses in list, looks up each addres in the code */
+/* and replaces whatever it is in the res.addres with the given  */
+/* parameter */
 void backPatch(GPtrArray * code, GPtrArray * list, int add){
-	int i;
-	for(i=0;i<list->len;i++){
-		long index = (long)g_ptr_array_index(list,i);
-		quad_p quad = g_ptr_array_index(code,index);		
-		union result res;
-		res.address = add;
-		quad->result = res;		
-	}
+  int i;
+  for(i=0;i<list->len;i++){
+    long index = (long)g_ptr_array_index(list,i);
+    quad_p quad = g_ptr_array_index(code,index);
+    union result res;
+    res.address = add;
+    quad->result = res;
+  }
 }
 
-//Merge of lists
+/* Combine two lists and return the new list generated */
 GPtrArray * mergeList(GPtrArray * list1, GPtrArray * list2){
-	GPtrArray * newList = g_ptr_array_new();
-	int i;
-	long * entry = malloc(sizeof(long));
-	for (i=0; i < list1->len; i++){
-		entry = (long *)g_ptr_array_index(list1,i);
-		g_ptr_array_add(newList,(gpointer)entry);
-	}
+  GPtrArray * newList = g_ptr_array_new();
+  int i;
+  long * entry = malloc(sizeof(long));
+  for (i=0; i < list1->len; i++){
+    entry = (long *)g_ptr_array_index(list1,i);
+    g_ptr_array_add(newList,(gpointer)entry);
+  }
 
-	for (i = 0; i < list2->len; i++){
-		entry = (long *)g_ptr_array_index(list2,i);
-		g_ptr_array_add(newList,(gpointer)entry);
-	}
-	return newList;
+  for (i = 0; i < list2->len; i++){
+    entry = (long *)g_ptr_array_index(list2,i);
+    g_ptr_array_add(newList,(gpointer)entry);
+  }
+  free(entry);
+  return newList;
 }
 
-
-//Clone de la lista
+/* Copy an existing list in a new space in memory */
 GPtrArray * cloneList(GPtrArray * list){
-	GPtrArray * newList = g_ptr_array_new();
-	int i;
-	long * entry = malloc(sizeof(long));
-	for (i=0; i < list->len; i++){
-		entry = (long *) g_ptr_array_index(list,i);
-		g_ptr_array_add(newList,(gpointer)entry);
-	}
-	return newList;
+  GPtrArray * newList = g_ptr_array_new();
+  int i;
+  long * entry = malloc(sizeof(long));
+  for (i=0; i < list->len; i++){
+    entry = (long *) g_ptr_array_index(list,i);
+    g_ptr_array_add(newList,(gpointer)entry);
+  }
+  free(entry);
+  return newList;
 }
+
 void PrintQuad(quad_p myQuad){
 	printf("Op: %s ", myQuad->op);
 	if(strcmp(myQuad->op,"jump")==0){
@@ -239,15 +242,15 @@ int PrintCode(GPtrArray *code){
 void interprete(GHashTable * theTable_p,GPtrArray *code){
 	int i = 0;
 	char * com;
-	entry_p add,t1,t2;	
-	union result res;	
+	entry_p add,t1,t2;
+	union result res;
 	printf("************************************\n");
 	printf("        INTERPRETACION         \n");
 	printf("************************************\n");
 
 	//Here starts the interpeter from line 0 of the array of the code
 	while(i<code->len){
-		quad_p quad = g_ptr_array_index(code,i);							//We get the quad from the array 
+		quad_p quad = g_ptr_array_index(code,i);							//We get the quad from the array
 		com = strdup(quad->op);												//Set the value of the operation to com
 		if(strcmp(com,"assign")==0){
 			add = g_hash_table_lookup(theTable_p,quad->result.entry->name_p);	//Get the variable that is going to change
@@ -342,7 +345,7 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
 			t1  = g_hash_table_lookup(theTable_p,quad->arg1->name_p);			//Get the first value of the operation
 			t2  = g_hash_table_lookup(theTable_p,quad->arg2->name_p);			//Get the second value of the operation
 
-			
+
 			if(add->type == 1){
 				if ((t1->type == 1)&&t2->type == 1){								//Real=Real*Real
 					add->value.r_value = t1->value.r_value*t2->value.r_value;
@@ -360,7 +363,7 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
 			}else{
 				if ((t1->type == 1)&&(t2->type == 1)){								//Real=Real*Real
 						add->value.i_value = t1->value.r_value*t2->value.r_value;
-				}else{					
+				}else{
 					if ((t1->type != 1)&&t2->type == 1){							//Real=Int*Real
 						add->value.i_value = t1->value.i_value*t2->value.r_value;
 					}else{
@@ -430,7 +433,7 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
                 else{
                      printf("Error al leer un Flotante");
                 }
-				
+
 			}
 		}
 		if(strcmp(com,"write")==0){
@@ -440,13 +443,13 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
 			/* Print in the correct format depending on the type */
 			if(add->type==integer)
 				printf("%d\n",add->value.i_value );
-			else				
+			else
 				printf("%f\n",add->value.r_value );
 		}
-		if(strcmp(com,"LT")==0){	
+		if(strcmp(com,"LT")==0){
 			t1  = g_hash_table_lookup(theTable_p,quad->arg1->name_p);		//Get the first value of the relation
 			t2  = g_hash_table_lookup(theTable_p,quad->arg2->name_p);		//Get the second value of the relation
-			//Compare the values and change the values and change the line of the code if it is true 
+			//Compare the values and change the values and change the line of the code if it is true
 			if ((t1->type == 1)&&t2->type == 1){
 					if((int)t1->value.r_value < (int)t2->value.r_value)
 						i=quad->result.address-1;
@@ -464,7 +467,7 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
 						}
 					}
 				}
-			
+
 		}
 		if(strcmp(com,"EQ")==0){
 			t1  = g_hash_table_lookup(theTable_p,quad->arg1->name_p);		//Get the first value of the relation
@@ -511,7 +514,7 @@ void interprete(GHashTable * theTable_p,GPtrArray *code){
 				}
 		}
 		if(strcmp(com,"jump")==0){
-			//Change the line that we are going to read next 
+			//Change the line that we are going to read next
 			i=quad->result.address-1; // add - 1 because i is augmented at the end of the while
 		}
 		i++;

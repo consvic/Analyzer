@@ -23,7 +23,7 @@ int x = 0;
 /*
 *   Arreglo en donde se guarda el codigo
 */
-GPtrArray *          code;	
+GPtrArray *          code;
 
 /* Declaramos las Funciones */
 void yyerror (GHashTable * theTable_p, const char* const message);
@@ -73,8 +73,7 @@ void cohersion();
 %token MINUS
 %token TIMES
 %token DIV
-%token INT_NUM
-%token FLOAT_NUM
+
 %type <i> type m
 %type <symTab> variable factor term simple_exp exp stmt_seq block stmt
 %type <list> n
@@ -101,10 +100,7 @@ single_dec  : type ID SEMI
               												} else {
 
               												  InsertSymbol(theTable_p,$2,$1,lineNum);
-              														/*entry_p      node_p;
-              														node_p = malloc(sizeof(entry_p));
-              														node_p = NewItem($2, $1, lineNum);
-              														g_hash_table_insert(theTable_p, node_p->name_p, node_p);*/
+
               												}
               										}
             ;
@@ -114,80 +110,85 @@ type        : INTEGER 					{ $$ = integer;}
             ;
 
 stmt_seq    : stmt_seq stmt m {
-                                                    $$ = malloc(sizeof(entry_p));     
-                                                                     
-                                                      $$->list_next = cloneList($2->list_next);                                                      
-                                                      backPatch(code,$2->list_next,$3);
-                                
+                                                   $$ = malloc(sizeof(entry_p));
+
+                                                      GPtrArray * next = $2->myLists->list_next;
+                                                      //$$->list_next = cloneList(myLists->list_next);
+                                                    //  backPatch(code,$2->list_next,$3);
+
                             }
 
             |                   {
-            
+
                                 }
             ;
 
 stmt        : IF exp THEN m stmt              {
-                                                      $$ = malloc(sizeof(entry_p));
-                                                      backPatch(code,$2->list_true,$4);
-                                                      $$->list_next = mergeList($2->list_false,$5->list_next);
+                                                    //  $$ = malloc(sizeof(entry_p));
+                                                      //backPatch(code,$2->list_true,$4);
+                                                      //$$->list_next = mergeList($2->list_false,$5->list_next);
                                             }
             | IF exp THEN m stmt n m stmt     {
-                                                      $$ = malloc(sizeof(entry_p));
-                                                      backPatch(code,$2->list_true,$4);
-                                                      backPatch(code,$2->list_false,$7);
-                                                      $$->list_next=mergeList($5->list_next,mergeList($6,$8->list_next));
+                                                    //  $$ = malloc(sizeof(entry_p));
+                                                      //backPatch(code,$2->list_true,$4);
+                                                      //backPatch(code,$2->list_false,$7);
+                                                      //$$->list_next=mergeList($5->list_next,mergeList($6,$8->list_next));
                                             }
             | WHILE m exp DO m stmt            {
-                                                      backPatch(code,$3->list_true,$5);
-                                                      $$ = malloc(sizeof(entry_p));                                                      
-                                                      $$->list_next = cloneList($3->list_false);                                                      
+                                                      //backPatch(code,$3->list_true,$5);
+                                                    //  $$ = malloc(sizeof(entry_p));
+                                                      //$$->list_next = cloneList($3->list_false);
                                                       union result res;
                                                       res.address = $2;
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
                                             }
             | variable ASSIGN exp SEMI
                                         {
-                                        
+
                                             printf("Linea %d con tipos %d %d\n",lineNum, $1->type, $3->type);
 
                                                 if(($1->type == real) && ($3->type == integer)) {
                                                     /*Aqui se hace la cohersion*/
                                                     cohersion();
                                                     $3->type = real;
-                                                      /*Pegar codigo*/
                                                 } else  if(($1->type == real) && ($3->type == real)) {
-                                                            /*Pegar codigo*/
                                                          } else  if(($1->type == integer)&& ($3->type == integer)) {
-                                                                /*Pegar codigo*/
                                                              } else {
                                                                  typeError();
                                                              }
 
                                                       union result res;
                                                       res.entry = $1;
-                                                      g_ptr_array_add(code,newQuad("assign",res,$3,NULL));                                                      
-                                                      
-                                                      $$->list_next = g_ptr_array_new();   
+                                                      g_ptr_array_add(code,newQuad("assign",res,$3,NULL));
+                                                      $$ = malloc(sizeof(entry_p));
+
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_next = g_ptr_array_new();
+                                                      $$->myLists = myLists;
                                         }
             | READ LPAREN variable RPAREN SEMI  {
                                                       union result resWrite;
                                                       resWrite.entry = $3;
                                                       g_ptr_array_add(code,newQuad("read",resWrite,NULL,NULL));
                                                       $$ = malloc(sizeof(entry_p));
-                                                      $$->list_next = g_ptr_array_new();
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_next = g_ptr_array_new();
+                                                      $$->myLists = myLists;
                                                 }
             | WRITE LPAREN exp RPAREN SEMI      {
                                                       union result resRead;
-                                                      resRead.entry = $3;                                                                                                      
-                                                      g_ptr_array_add(code,newQuad("write",resRead,NULL,NULL)); 
+                                                      resRead.entry = $3;
+                                                      g_ptr_array_add(code,newQuad("write",resRead,NULL,NULL));
                                                       $$ = malloc(sizeof(entry_p));
-                                                      $$->list_next = g_ptr_array_new();
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_next = g_ptr_array_new();
+                                                      $$->myLists = myLists;
                                                 }
             | block                             {
                                                     $$ = $1;
                                                 }
             ;
-            
+
 m           :                                   {
                                                     $$ = code->len;
                                                 }
@@ -199,20 +200,26 @@ n           : ELSE 					            {
                                                union result res;
 									           res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
 									           g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
-                                               
+
 								                }
             ;
-            
 
-block       : LBRACE stmt_seq RBRACE            {                                                          
-                                                      $$ = $2;                                                      
+
+block       : LBRACE stmt_seq RBRACE            {
+                                                      $$ = $2;
                                                 }
             ;
 
-exp         : simple_exp LT simple_exp          {                                                      
+exp         : simple_exp LT simple_exp          {
+                                                      $$ = malloc(sizeof(entry_p));
                                                       $$->type = integer;
-                                                      $$->list_true = newList(code->len);                                                      
-                                                      $$->list_false = newList(code->len+1); 
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_true = NULL;
+                                                      myLists->list_false = NULL;
+                                                      myLists->list_next = NULL;
+                                                    myLists->list_true = newList(code->len);
+                                                    myLists->list_false = newList(code->len+1);
+                                                    $$->myLists = myLists;
 
                                                       /* Place the "code" generated in the array that represents the memory */
                                                       union result res;
@@ -220,13 +227,22 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("LT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp EQ simple_exp          {
+                                                      $$ = malloc(sizeof(entry_p));
                                                       $$->type = integer;
-                                                      $$->list_true = newList(code->len);
-                                                      $$->list_false = newList(code->len+1);
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_true = NULL;
+                                                      myLists->list_false = NULL;
+                                                      myLists->list_next = NULL;
+                                                    myLists->list_true = newList(code->len);
+                                                    myLists->list_false = newList(code->len+1);
+                                                    $$->myLists = myLists;
+
+                                                  //   $$->list_true = newList(code->len);
+                                                      //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
                                                       union result res;
@@ -234,14 +250,22 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("EQ",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp GT simple_exp          {
-
+                                                      $$ = malloc(sizeof(entry_p));
                                                       $$->type = integer;
-                                                      $$->list_true = newList(code->len);
-                                                      $$->list_false = newList(code->len+1);
+
+                                                      $$ = malloc(sizeof(entry_p));
+                                                      $$->type = integer;
+                                                      theLists_p myLists = malloc(sizeof(theLists_p));
+                                                      myLists->list_true = NULL;
+                                                      myLists->list_false = NULL;
+                                                      myLists->list_next = NULL;
+                                                    myLists->list_true = newList(code->len);
+                                                    myLists->list_false = newList(code->len+1);
+                                                    $$->myLists = myLists;
 
                                                       /* Place the "code" generated in the array that represents the memory */
                                                       union result res;
@@ -249,8 +273,8 @@ exp         : simple_exp LT simple_exp          {
                                                       g_ptr_array_add(code,newQuad("GT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
-                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                      res2.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res2,NULL,NULL));
                                                 }
             | simple_exp
                                                 {
@@ -260,7 +284,7 @@ exp         : simple_exp LT simple_exp          {
 
 simple_exp  : simple_exp PLUS term
                                           {
-
+                                                      $$ = newTemp(theTable_p);
                                                       if($1->type == real){
                                                             if($3->type==real){
                                                                   $$->type = real;
@@ -278,7 +302,7 @@ simple_exp  : simple_exp PLUS term
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                 
+
                                                                   $$->type = integer;
                                                             }
                                                       }
@@ -289,7 +313,7 @@ simple_exp  : simple_exp PLUS term
 
             | simple_exp MINUS term
                                           {
-
+                                                      $$ = newTemp(theTable_p);
                                                       if($1->type == real){
                                                             if($3->type==real){
                                                                   $$->type = real;
@@ -307,7 +331,6 @@ simple_exp  : simple_exp PLUS term
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
@@ -325,6 +348,7 @@ simple_exp  : simple_exp PLUS term
 
 term        : term TIMES factor
                                           {
+                                                      $$ = newTemp(theTable_p);
                                                       if($1->type == real){
                                                             if($3->type==real){
                                                                   $$->type = real;
@@ -342,7 +366,6 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  printf("HOLI");
                                                                   $$->type = integer;
                                                             }
                                                       }
@@ -353,7 +376,7 @@ term        : term TIMES factor
                                           }
             | term DIV factor
                                           {
-
+                                                      $$ = newTemp(theTable_p);
                                                       if($1->type == real){
                                                             if($3->type==real){
                                                                   $$->type = real;
@@ -376,9 +399,9 @@ term        : term TIMES factor
                                                                   $$->type = real;
                                                             }
                                                       }
-                                                      union result res;
-                                                      res.entry = $$;
-                                                      g_ptr_array_add(code,newQuad("div",res,$1,$3));
+                                                     union result res;
+                                                    res.entry = $$;
+                                                    g_ptr_array_add(code,newQuad("div",res,$1,$3));
 
                                           }
 			      | factor
@@ -415,7 +438,7 @@ variable    : ID
                                         {
                                               /* Check if the variable is in the symbol table */
                                               entry_p node = SymbolLookUp(theTable_p,$1);
-                                              if(node == NULL){ 
+                                              if(node == NULL){
                                                     x = 1;
                                                     printf("Error! In line %d: Undeclared variable %s\n",lineNum,$1);
                                               }else{
@@ -457,4 +480,3 @@ int main (){
 
   DestroyTable(theTable_p);
 }
-

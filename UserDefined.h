@@ -64,16 +64,26 @@ union val {            /* Note that both values are 32-bits in length */
 *    efficient if smaller types are allowed.
 *
 */
+
+typedef struct lists_ {
+  GPtrArray *		list_true;
+  GPtrArray *		list_false;
+  GPtrArray *		list_next;
+}lists;
+
+typedef struct lists_ *theLists_p; /**< Declaration of ptr to an entry */
+
+
 typedef struct tableEntry_{
    char           * name_p;            /**< The name is just the string */
    enum myTypes	type;                          /**< Identifier type */
    unsigned int     lineNumber;  /**< Line number of the last reference */
    union val        value;       /**< Value of the symbol table element */
-    GPtrArray *		list_true;
-	GPtrArray *		list_false;
-	GPtrArray *		list_next;
+
+   theLists_p myLists;
 
 }tableEntry;
+
 
 /**
 *
@@ -83,6 +93,23 @@ typedef struct tableEntry_{
 *
 */
 typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
+
+//Recibimos el Result
+union result{
+	int 	address;
+	entry_p entry;
+};
+
+//Definimos la estructura del Quad
+typedef struct quad_{
+	char *			op;
+	union result	result;
+	entry_p 		arg1;
+	entry_p			arg2;
+}quad;
+
+
+typedef struct quad_ * quad_p;
 
 /**
 *
@@ -389,21 +416,6 @@ entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes ty
 *
 */
 void SymbolUpdate(GHashTable *theTable_p, char * name, enum myTypes type, union val value);
-//Recibimos el Result
-union result{
-	int 	address;
-	entry_p entry;
-};
-//Definimos la estructura del Quad
-typedef struct quad_{
-	char *			op;
-	union result	result;
-	entry_p 		arg1;
-	entry_p			arg2;
-}quad;
-
-
-typedef struct quad_ * quad_p;
 
 quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2);
 /*Arreglo de las direcciones*/
@@ -417,7 +429,7 @@ void backPatch(GPtrArray * code, GPtrArray * list, int add);
 
 void PrintQuad(quad_p myQuad);								/*********************/
 															/*                   */
-int PrintCodeHelper(gpointer data, gpointer user_data);		/* Print the Code    */	
+int PrintCodeHelper(gpointer data, gpointer user_data);		/* Print the Code    */
 															/* generated         */
-int PrintCode(GPtrArray *code);	
+int PrintCode(GPtrArray *code);
 void interprete(GHashTable * theTable_p,GPtrArray *code);
