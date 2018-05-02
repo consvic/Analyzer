@@ -222,7 +222,7 @@ exp         : simple_exp LT simple_exp          {
                                                       //$$->list_false = NULL;
                                                       //$$->list_next = NULL;
                                                       $$->type = integer;
-                                                      //$$->list_true = newList(code->len);
+                                                      $$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
@@ -240,7 +240,7 @@ exp         : simple_exp LT simple_exp          {
                                                       //$$->list_false = NULL;
                                                     //  $$->list_next = NULL;
                                                       $$->type = integer;
-                                                      //$$->list_true = newList(code->len);
+                                                      $$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
@@ -254,12 +254,11 @@ exp         : simple_exp LT simple_exp          {
                                                 }
             | simple_exp GT simple_exp          {
                                                       //$$ = malloc(sizeof(entry_p));
-                                                      $$->list_true = NULL;
-                                                      $$->list_false = NULL;
-                                                      $$->list_next = NULL;
+                                                    //  $$->list_true = NULL;
+                                                      //$$->list_false = NULL;
+                                                      //$$->list_next = NULL;
                                                       $$->type = integer;
-                                                      $$->type = integer;
-                                                      //$$->list_true = newList(code->len);
+                                                      $$->list_true = newList(code->len);
                                                       //$$->list_false = newList(code->len+1);
 
                                                       /* Place the "code" generated in the array that represents the memory */
@@ -389,7 +388,7 @@ term        : term TIMES factor
                                                               $$->type = real;
                                                             }
                                                             else{
-                                                                  
+
                                                                   printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
                                                                   $$->type = real;
                                                             }
