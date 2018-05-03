@@ -8,7 +8,9 @@ Constanza lievanos Sanchez A01361015
 
 %{
 	#include <stdlib.h>
-	int lineNum = 1;  //Variable para saber en que linea se cometio el error
+	#include <string.h>  
+	#include <glib.h>
+	
 %}
 
 
@@ -24,7 +26,7 @@ leter [a-zA-Z_]
 
 %%
 
-[\n] 						  { lineNum++; }
+[\n] 						  { yylineno = yylineno +1; }
 [ \t\r]+							  {		       }
 
 
@@ -35,8 +37,8 @@ leter [a-zA-Z_]
 
 
 	/*Palabras Reservadas*/
-"int" 							  { yylval.s = strdup(yytext);return INTEGER;}
-"float" 						  { yylval.s = strdup(yytext);return FLOAT;}
+"int" 							  { return INTEGER;}
+"float" 						  { return FLOAT;}
 "if" 							  { return IF;}
 "then"							  { return THEN;}
 "else" 							  { return ELSE;}
@@ -54,13 +56,13 @@ leter [a-zA-Z_]
 "}" 							  { return RBRACE;}
 
 	/*Tokens de Comparacion*/
-"<" 							  { return LT;}
-">" 							  { return GT;}
-"<=" 							  { return GE;}
-">=" 							  { return LE;}
-"=" 							  { return EQ;}
-"!=" 							  { return NE;}
-
+"<" 		{ return LT;}
+">" 		{ return GT;}
+"<=" 		{ return GT;}
+">=" 		{ return LT;}
+"=" 		{ return EQ;}
+"!=" 		{ return EQ;}
+ 
 	/* Signos Aritmeticos */
 "+" 							  { return PLUS; }
 "-" 							  { return MINUS; }
@@ -72,13 +74,15 @@ leter [a-zA-Z_]
 
 	/* Gramaticas para numeros enteros y otro para decimales */
 
--?(({d}*\.{d}+)([eE][+-]?{d}+)?)  { return FLOAT; }
--?({d}+)						  { return INTEGER; }
+-?(({d}*\.{d}+)([eE][+-]?{d}+)?) 	 { 	yylval.float_value = atof (yytext);
+										return FLOAT_NUM; }
+-?({d}+)							 { 	yylval.integer_value = atoi (yytext);
+										return INT_NUM; }
 
 
 	/* Gramatica para identificadores */
-({leter})({leter}|{d})* 		  {yylval.s = strdup(yytext);
-return ID;}
+({leter})({leter}|{d})* 			 { 	yylval.string_value = strdup(yytext);
+										return ID;}
 
 
 	/* Gramatica para "Strings" */
@@ -87,6 +91,6 @@ return ID;}
 									printf("%s\n",yytext);
 								  }
 
-	/* Si el simbolo no es reconocido, lo tomara como error*/
-. 								  { printf("Error: Symbol not recognized\t%d in line %d\n",*yytext,lineNum); }
+	/* Any other character not recognized */
+. 									{return yytext[0];}
 %%

@@ -1,9 +1,10 @@
 
 #include <glib.h>
 #include <string.h>
-#include "types.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+enum myTypes {integer, real};			/* Types to be used. Boolean = integer*/
 
 /**
 *
@@ -65,10 +66,9 @@ union val {            /* Note that both values are 32-bits in length */
 *
 */
 typedef struct tableEntry_{
-   char           * name_p;            /**< The name is just the string */
-   enum myTypes	type;                          /**< Identifier type */
-   unsigned int     lineNumber;  /**< Line number of the last reference */
-   union val        value;       /**< Value of the symbol table element */
+    char *          name;            /**< The name is just the string */
+    enum myTypes	type;                          /**< Identifier type */
+    union val        value;       /**< Value of the symbol table element */
     GPtrArray *		list_true;
 	GPtrArray *		list_false;
 	GPtrArray *		list_next;
@@ -101,14 +101,14 @@ typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
 * @endcode
 *
 */
-int PrintItem (entry_p theEntry_p);
+int PrintItem(entry_p my_item);
 
 /**
 *
 * @brief Gets the key, value and data pointers from the @c g_hash_foreach
 * and calls PrintItem for each element.
 *
-* @b SupportPrint is a support function that captures the key, value and
+* @b PrintSymbol is a support function that captures the key, value and
 * data pointers from @c g_hash_foreach and in turn calls @c PrintItem to
 * print each entry from the hash table.
 *
@@ -122,7 +122,7 @@ int PrintItem (entry_p theEntry_p);
 * @endcode
 *
 */
-void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p);
+int PrintSymbol(gpointer key,gpointer value, gpointer data);
 
 /**
 *
@@ -142,7 +142,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p);
 * @endcode
 *
 */
-int PrintTable (GHashTable * theTable_p);
+int PrintTable(GHashTable * my_table);
 
 /**
 *
@@ -195,7 +195,7 @@ int PrintTable (GHashTable * theTable_p);
 * @endcode
 *
 */
-entry_p SymbolLookUp(GHashTable *theTable_p, char *name);
+entry_p SymLookUp(GHashTable *myTable, char *name);
 
 /**
 *
@@ -223,7 +223,7 @@ entry_p SymbolLookUp(GHashTable *theTable_p, char *name);
 * @endcode
 *
 */
-void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type,unsigned int lineNumber);
+void SymInsert(GHashTable *myTable, char * name, enum myTypes type);
 
 /**
 *
@@ -336,7 +336,7 @@ int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
 * @endcode
 *
 */
-entry_p newTemp(GHashTable *theTable_p);
+entry_p newTemp(GHashTable *myTable);
 
 /**
 *
@@ -366,7 +366,7 @@ entry_p newTemp(GHashTable *theTable_p);
 * @endcode
 *
 */
-entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes type);
+entry_p newTempCons(GHashTable *myTable, union val value, enum myTypes type);
 
 /**
 *
@@ -388,7 +388,7 @@ entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes ty
 * @endcode
 *
 */
-void SymbolUpdate(GHashTable *theTable_p, char * name, enum myTypes type, union val value);
+void SymUpdate(GHashTable *myTable, char * name, enum myTypes type, union val value);
 //Recibimos el Result
 union result{
 	int 	address;
