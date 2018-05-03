@@ -19,5 +19,5 @@ o
 
   $ make
 
-  $ ./compiladores < test1.txt
+  $ ./compiladores < test2.txt
 
