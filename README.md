@@ -1,6 +1,6 @@
 # Analyzer
 
-#### Syntactic and Semantic Analysis
+#### Syntactic, Semantic Analysis and Interpreter
 ## Autores
 Constanza Lievanos Sanchez A01361506
 

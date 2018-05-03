@@ -1,7 +1,10 @@
 
 #include <glib.h>
 #include <string.h>
-#include "types.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+enum myTypes {integer, real};			/* Types to be used. Boolean = integer*/
 
 /**
 *
@@ -56,17 +59,18 @@ union val {            /* Note that both values are 32-bits in length */
 *
 * The @c type indicates if the variable is integer or float.
 *
-* The @c lineNumber is the line number where the variable was defined.
 *
 * The @c value is a union of all possible values (integer/float). Not space
 *    efficient if smaller types are allowed.
 *
 */
 typedef struct tableEntry_{
-   char           * name_p;            /**< The name is just the string */
-   enum myTypes	type;                          /**< Identifier type */
-   unsigned int     lineNumber;  /**< Line number of the last reference */
-   union val        value;       /**< Value of the symbol table element */
+    char *          name;            /**< The name is just the string */
+    enum myTypes	type;                          /**< Identifier type */
+    union val        value;       /**< Value of the symbol table element */
+    GPtrArray *		list_true;
+	GPtrArray *		list_false;
+	GPtrArray *		list_next;
 
 }tableEntry;
 
@@ -96,14 +100,14 @@ typedef struct tableEntry_ *entry_p; /**< Declaration of ptr to an entry */
 * @endcode
 *
 */
-int PrintItem (entry_p theEntry_p);
+int PrintItem(entry_p my_item);
 
 /**
 *
 * @brief Gets the key, value and data pointers from the @c g_hash_foreach
 * and calls PrintItem for each element.
 *
-* @b SupportPrint is a support function that captures the key, value and
+* @b PrintSymbol is a support function that captures the key, value and
 * data pointers from @c g_hash_foreach and in turn calls @c PrintItem to
 * print each entry from the hash table.
 *
@@ -117,7 +121,7 @@ int PrintItem (entry_p theEntry_p);
 * @endcode
 *
 */
-void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p);
+int PrintSymbol(gpointer key,gpointer value, gpointer data);
 
 /**
 *
@@ -137,7 +141,7 @@ void SupportPrint (gpointer key_p, gpointer value_p, gpointer user_p);
 * @endcode
 *
 */
-int PrintTable (GHashTable * theTable_p);
+int PrintTable(GHashTable * my_table);
 
 /**
 *
@@ -190,7 +194,7 @@ int PrintTable (GHashTable * theTable_p);
 * @endcode
 *
 */
-entry_p SymbolLookUp(GHashTable *theTable_p, char *name);
+entry_p SymLookUp(GHashTable *myTable, char *name);
 
 /**
 *
@@ -218,7 +222,7 @@ entry_p SymbolLookUp(GHashTable *theTable_p, char *name);
 * @endcode
 *
 */
-void InsertSymbol(GHashTable *theTable_p, char * name, enum myTypes type,unsigned int lineNumber);
+void SymInsert(GHashTable *myTable, char * name, enum myTypes type);
 
 /**
 *
@@ -263,7 +267,7 @@ void InsertSymbolTemp(GHashTable *theTable_p, char * name, enum myTypes type);
 * @endcode
 *
 */
-int FreeItem (entry_p theEntry_p);
+void FreeItem(gpointer my_entry);
 
 /**
 *
@@ -331,7 +335,7 @@ int InsertItem(GHashTable * theTable_p, entry_p theEntry_p);
 * @endcode
 *
 */
-entry_p newTemp(GHashTable *theTable_p);
+entry_p newTemp(GHashTable *myTable);
 
 /**
 *
@@ -361,7 +365,7 @@ entry_p newTemp(GHashTable *theTable_p);
 * @endcode
 *
 */
-entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes type);
+entry_p newTempCons(GHashTable *myTable, union val value, enum myTypes type);
 
 /**
 *
@@ -383,4 +387,162 @@ entry_p newTempConstant(GHashTable *theTable_p, union val value, enum myTypes ty
 * @endcode
 *
 */
-void SymbolUpdate(GHashTable *theTable_p, char * name, enum myTypes type, union val value);
+
+void SymUpdate(GHashTable *myTable, char * name, enum myTypes type, union val value);
+/**
+*
+* @union result
+*
+* @brief Defines the address
+*
+* The @c result union defines tthe address of the quad
+*
+*/
+union result{
+	int 	address;
+	entry_p entry;
+};
+/**
+*
+* @struct quad
+*
+* @brief This is the quad structure
+*
+* The @c quad is where the code will be store. Each entry has the following fields:
+*
+* The @c op is a string holding the opperation.
+*
+* The @c result indicates the union result of the wuad
+*
+* 
+*/
+
+typedef struct quad_{
+	char *			op;
+	union result	result;
+	entry_p 		arg1;
+	entry_p			arg2;
+}quad;
+
+/**
+*
+* @typedef quad_
+*
+* @brief pointer to the @c quad @c structure
+*
+*/
+typedef struct quad_ * quad_p;
+/**
+*
+* @brief Inserts a new quad to the quad structure
+*
+* 
+*
+* @param char * op is the operation
+* @param result is the union result
+* @param arg1 is the pointer to the first Argument
+* @param arg2 is the pointer to the second Argument
+*
+*@code
+*quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2){
+*	quad_p myQuad = malloc(sizeof(quad_p));
+*	myQuad->op = strdup(op);
+*	myQuad->result = res;
+*	myQuad->arg1 = arg1;	//Can be null
+*	myQuad->arg2 = arg2;	//Can be null
+*	return myQuad;
+*  }
+* @endCode
+*
+*
+*/
+quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2);
+/**
+*
+* @typedef newList
+*
+* @brief Lista de todas Las direcciones
+*
+*/
+GPtrArray * newList(int add);
+/**
+*
+* @typedef cloneList
+*
+* @brief Copia de las lsitas de direcciones
+*
+*/
+GPtrArray * cloneList(GPtrArray * list);
+/**
+*
+* @typedef mergeList
+*
+* @brief Lista que combina las lista 1 y dos
+
+*
+*/
+GPtrArray * mergeList(GPtrArray * list1, GPtrArray * list2);
+/**
+*
+* @brief Generates Backpatch
+*
+* 
+*
+* @param GPtrArray * code receives the code
+* @param list receives the list of address
+*
+*
+*@code
+*void backPatch(GPtrArray * code, GPtrArray * list, int add){
+*	int i;
+*	for(i=0;i<list->len;i++){
+*		long index = (long)g_ptr_array_index(list,i);
+*		quad_p quad = g_ptr_array_index(code,index);		
+*		union result res;
+*		res.address = add;
+*		quad->result = res;		
+*	}
+*}
+*
+* @endCode
+*
+*
+*/
+void backPatch(GPtrArray * code, GPtrArray * list, int add);
+/**
+*
+* @typedef PrintQuad
+*
+* @brief Prints all the quads
+
+*
+*/
+void PrintQuad(quad_p myQuad);								
+/**
+*
+* @typedef PrintCodeHelper
+*
+* @brief prints the data from the quad
+
+*
+*/															
+int PrintCodeHelper(gpointer data, gpointer user_data);		
+/**
+*
+* @typedef PrintCode
+*
+* @brief Prints the array of code
+
+*
+*/															
+int PrintCode(GPtrArray *code);	
+/**
+*
+* @typedef interprete
+*
+* @brief function that acts as an interprete of the code generation
+*
+* @param GHashTable * theTable_p receives the symbol table
+* @param GPtrArray * code receives the code generated
+*/	
+void interprete(GHashTable * theTable_p,GPtrArray *code);
