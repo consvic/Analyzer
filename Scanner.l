@@ -74,14 +74,14 @@ leter [a-zA-Z_]
 
 	/* Gramaticas para numeros enteros y otro para decimales */
 
--?(({d}*\.{d}+)([eE][+-]?{d}+)?) 	 { 	yylval.float_value = atof (yytext);
+-?(({d}*\.{d}+)([eE][+-]?{d}+)?) 	 { 	yylval.f = atof (yytext);
 										return FLOAT_NUM; }
--?({d}+)							 { 	yylval.integer_value = atoi (yytext);
+-?({d}+)							 { 	yylval.i = atoi (yytext);
 										return INT_NUM; }
 
 
 	/* Gramatica para identificadores */
-({leter})({leter}|{d})* 			 { 	yylval.string_value = strdup(yytext);
+({leter})({leter}|{d})* 			 { 	yylval.s = strdup(yytext);
 										return ID;}
 
 

@@ -59,7 +59,6 @@ union val {            /* Note that both values are 32-bits in length */
 *
 * The @c type indicates if the variable is integer or float.
 *
-* The @c lineNumber is the line number where the variable was defined.
 *
 * The @c value is a union of all possible values (integer/float). Not space
 *    efficient if smaller types are allowed.
@@ -388,13 +387,36 @@ entry_p newTempCons(GHashTable *myTable, union val value, enum myTypes type);
 * @endcode
 *
 */
+
 void SymUpdate(GHashTable *myTable, char * name, enum myTypes type, union val value);
-//Recibimos el Result
+/**
+*
+* @union result
+*
+* @brief Defines the address
+*
+* The @c result union defines tthe address of the quad
+*
+*/
 union result{
 	int 	address;
 	entry_p entry;
 };
-//Definimos la estructura del Quad
+/**
+*
+* @struct quad
+*
+* @brief This is the quad structure
+*
+* The @c quad is where the code will be store. Each entry has the following fields:
+*
+* The @c op is a string holding the opperation.
+*
+* The @c result indicates the union result of the wuad
+*
+* 
+*/
+
 typedef struct quad_{
 	char *			op;
 	union result	result;
@@ -402,22 +424,125 @@ typedef struct quad_{
 	entry_p			arg2;
 }quad;
 
-
+/**
+*
+* @typedef quad_
+*
+* @brief pointer to the @c quad @c structure
+*
+*/
 typedef struct quad_ * quad_p;
-
+/**
+*
+* @brief Inserts a new quad to the quad structure
+*
+* 
+*
+* @param char * op is the operation
+* @param result is the union result
+* @param arg1 is the pointer to the first Argument
+* @param arg2 is the pointer to the second Argument
+*
+*@code
+*quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2){
+*	quad_p myQuad = malloc(sizeof(quad_p));
+*	myQuad->op = strdup(op);
+*	myQuad->result = res;
+*	myQuad->arg1 = arg1;	//Can be null
+*	myQuad->arg2 = arg2;	//Can be null
+*	return myQuad;
+*  }
+* @endCode
+*
+*
+*/
 quad_p newQuad(char * op, union result res, entry_p arg1, entry_p arg2);
-/*Arreglo de las direcciones*/
+/**
+*
+* @typedef newList
+*
+* @brief Lista de todas Las direcciones
+*
+*/
 GPtrArray * newList(int add);
-//Clone de la lista
+/**
+*
+* @typedef cloneList
+*
+* @brief Copia de las lsitas de direcciones
+*
+*/
 GPtrArray * cloneList(GPtrArray * list);
-//Merge de las listas
-GPtrArray * mergeList(GPtrArray * list1, GPtrArray * list2);
-//Backpatch
-void backPatch(GPtrArray * code, GPtrArray * list, int add);
+/**
+*
+* @typedef mergeList
+*
+* @brief Lista que combina las lista 1 y dos
 
-void PrintQuad(quad_p myQuad);								/*********************/
-															/*                   */
-int PrintCodeHelper(gpointer data, gpointer user_data);		/* Print the Code    */	
-															/* generated         */
+*
+*/
+GPtrArray * mergeList(GPtrArray * list1, GPtrArray * list2);
+/**
+*
+* @brief Generates Backpatch
+*
+* 
+*
+* @param GPtrArray * code receives the code
+* @param list receives the list of address
+*
+*
+*@code
+*void backPatch(GPtrArray * code, GPtrArray * list, int add){
+*	int i;
+*	for(i=0;i<list->len;i++){
+*		long index = (long)g_ptr_array_index(list,i);
+*		quad_p quad = g_ptr_array_index(code,index);		
+*		union result res;
+*		res.address = add;
+*		quad->result = res;		
+*	}
+*}
+*
+* @endCode
+*
+*
+*/
+void backPatch(GPtrArray * code, GPtrArray * list, int add);
+/**
+*
+* @typedef PrintQuad
+*
+* @brief Prints all the quads
+
+*
+*/
+void PrintQuad(quad_p myQuad);								
+/**
+*
+* @typedef PrintCodeHelper
+*
+* @brief prints the data from the quad
+
+*
+*/															
+int PrintCodeHelper(gpointer data, gpointer user_data);		
+/**
+*
+* @typedef PrintCode
+*
+* @brief Prints the array of code
+
+*
+*/															
 int PrintCode(GPtrArray *code);	
+/**
+*
+* @typedef interprete
+*
+* @brief function that acts as an interprete of the code generation
+*
+* @param GHashTable * theTable_p receives the symbol table
+* @param GPtrArray * code receives the code generated
+*/	
 void interprete(GHashTable * theTable_p,GPtrArray *code);

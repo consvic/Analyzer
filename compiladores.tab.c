@@ -153,11 +153,11 @@ union YYSTYPE
 {
 #line 23 "tinyC.y" /* yacc.c:355  */
 
-   int          integer_value;
-   float        float_value;
-   char *       string_value;
-   entry_p      symTab;
-   GPtrArray *	list;
+    char *s;
+    float f;
+    int i;
+    entry_p  symTab;
+    GPtrArray *	list;
 
 #line 163 "compiladores.tab.c" /* yacc.c:355  */
 };
@@ -476,10 +476,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    73,    73,    76,    77,    80,    90,    91,    94,   101,
-     106,   111,   117,   125,   151,   160,   169,   174,   179,   189,
-     194,   208,   222,   237,   242,   270,   297,   302,   329,   358,
-     363,   367,   373,   379,   384
+       0,    72,    72,    75,    76,    79,    89,    90,    93,   100,
+     105,   110,   116,   124,   150,   159,   168,   173,   178,   188,
+     193,   207,   221,   236,   241,   269,   296,   301,   328,   357,
+     362,   366,   372,   378,   383
 };
 #endif
 
@@ -1291,49 +1291,49 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 73 "tinyC.y" /* yacc.c:1646  */
+#line 72 "tinyC.y" /* yacc.c:1646  */
     { printf ("No syntax errors \n");}
 #line 1297 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 80 "tinyC.y" /* yacc.c:1646  */
+#line 79 "tinyC.y" /* yacc.c:1646  */
     {
-                                                            if(SymLookUp(theTable_p,(yyvsp[-1].string_value))!=NULL){
-                                                                  printf("\nWarning! In line %d: Variable %s already defined\n",yylineno,(yyvsp[-1].string_value) );                                                                  
+                                                            if(SymLookUp(theTable_p,(yyvsp[-1].s))!=NULL){
+                                                                  printf("\nWarning! In line %d: Variable %s already defined\n",yylineno,(yyvsp[-1].s) );                                                                  
                                                             }else{
-                                                                  SymInsert(theTable_p,(yyvsp[-1].string_value),(yyvsp[-2].integer_value));
+                                                                  SymInsert(theTable_p,(yyvsp[-1].s),(yyvsp[-2].i));
                                                             }
                                                       }
 #line 1309 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 90 "tinyC.y" /* yacc.c:1646  */
-    {(yyval.integer_value) = integer;}
+#line 89 "tinyC.y" /* yacc.c:1646  */
+    {(yyval.i) = integer;}
 #line 1315 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 91 "tinyC.y" /* yacc.c:1646  */
-    {(yyval.integer_value) = real;}
+#line 90 "tinyC.y" /* yacc.c:1646  */
+    {(yyval.i) = real;}
 #line 1321 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 94 "tinyC.y" /* yacc.c:1646  */
+#line 93 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = malloc(sizeof(entry_p));     
                                                       
                                                                
                                                       (yyval.symTab)->list_next = cloneList((yyvsp[-1].symTab)->list_next);                                                      
-                                                      backPatch(code,(yyvsp[-1].symTab)->list_next,(yyvsp[0].integer_value));
+                                                      backPatch(code,(yyvsp[-1].symTab)->list_next,(yyvsp[0].i));
                                                 }
 #line 1333 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 101 "tinyC.y" /* yacc.c:1646  */
+#line 100 "tinyC.y" /* yacc.c:1646  */
     {                                                      
                                                       
                                                 }
@@ -1341,41 +1341,41 @@ yyreduce:
     break;
 
   case 10:
-#line 106 "tinyC.y" /* yacc.c:1646  */
+#line 105 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = malloc(sizeof(entry_p));
-                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].integer_value));
+                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].i));
                                                       (yyval.symTab)->list_next = mergeList((yyvsp[-3].symTab)->list_false,(yyvsp[0].symTab)->list_next);
                                                 }
 #line 1351 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 111 "tinyC.y" /* yacc.c:1646  */
+#line 110 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = malloc(sizeof(entry_p));
-                                                      backPatch(code,(yyvsp[-6].symTab)->list_true,(yyvsp[-4].integer_value));
-                                                      backPatch(code,(yyvsp[-6].symTab)->list_false,(yyvsp[-1].integer_value));
+                                                      backPatch(code,(yyvsp[-6].symTab)->list_true,(yyvsp[-4].i));
+                                                      backPatch(code,(yyvsp[-6].symTab)->list_false,(yyvsp[-1].i));
                                                       (yyval.symTab)->list_next=mergeList((yyvsp[-3].symTab)->list_next,mergeList((yyvsp[-2].list),(yyvsp[0].symTab)->list_next));
                                                 }
 #line 1362 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 117 "tinyC.y" /* yacc.c:1646  */
+#line 116 "tinyC.y" /* yacc.c:1646  */
     {     
-                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].integer_value));
+                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].i));
                                                       (yyval.symTab) = malloc(sizeof(entry_p));                                                      
                                                       (yyval.symTab)->list_next = cloneList((yyvsp[-3].symTab)->list_false);                                                      
                                                       union result res;
-                                                      res.address = (yyvsp[-4].integer_value);
+                                                      res.address = (yyvsp[-4].i);
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));                  
                                                 }
 #line 1375 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 125 "tinyC.y" /* yacc.c:1646  */
+#line 124 "tinyC.y" /* yacc.c:1646  */
     {
                                                       
                                                       /* Place the "code" generated in the array that represents the memory */
@@ -1406,7 +1406,7 @@ yyreduce:
     break;
 
   case 14:
-#line 151 "tinyC.y" /* yacc.c:1646  */
+#line 150 "tinyC.y" /* yacc.c:1646  */
     {
                                                       union result resWrite;
                                                       resWrite.entry = (yyvsp[-2].symTab);
@@ -1420,7 +1420,7 @@ yyreduce:
     break;
 
   case 15:
-#line 160 "tinyC.y" /* yacc.c:1646  */
+#line 159 "tinyC.y" /* yacc.c:1646  */
     {
                                                       union result resRead;
                                                       resRead.entry = (yyvsp[-2].symTab);                                                                                                      
@@ -1434,7 +1434,7 @@ yyreduce:
     break;
 
   case 16:
-#line 169 "tinyC.y" /* yacc.c:1646  */
+#line 168 "tinyC.y" /* yacc.c:1646  */
     {                                                      
                                                       (yyval.symTab) = (yyvsp[0].symTab);
                                                 }
@@ -1442,16 +1442,16 @@ yyreduce:
     break;
 
   case 17:
-#line 174 "tinyC.y" /* yacc.c:1646  */
+#line 173 "tinyC.y" /* yacc.c:1646  */
     {          
                                                       /* Get the actual address in the code to perform the backpatch*/
-									(yyval.integer_value) = code->len;
+									(yyval.i) = code->len;
 								}
 #line 1451 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 179 "tinyC.y" /* yacc.c:1646  */
+#line 178 "tinyC.y" /* yacc.c:1646  */
     {
 									(yyval.list) = newList(code->len);
 
@@ -1464,7 +1464,7 @@ yyreduce:
     break;
 
   case 19:
-#line 189 "tinyC.y" /* yacc.c:1646  */
+#line 188 "tinyC.y" /* yacc.c:1646  */
     {                                                          
                                                       (yyval.symTab) = (yyvsp[-1].symTab);                                                      
                                                 }
@@ -1472,7 +1472,7 @@ yyreduce:
     break;
 
   case 20:
-#line 194 "tinyC.y" /* yacc.c:1646  */
+#line 193 "tinyC.y" /* yacc.c:1646  */
     {                                                      
                                                       (yyval.symTab)->type = integer;
                                                       (yyval.symTab)->list_true = newList(code->len);                                                      
@@ -1491,7 +1491,7 @@ yyreduce:
     break;
 
   case 21:
-#line 208 "tinyC.y" /* yacc.c:1646  */
+#line 207 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab)->type = integer;
                                                       (yyval.symTab)->list_true = newList(code->len);
@@ -1510,7 +1510,7 @@ yyreduce:
     break;
 
   case 22:
-#line 222 "tinyC.y" /* yacc.c:1646  */
+#line 221 "tinyC.y" /* yacc.c:1646  */
     {
 
                                                       (yyval.symTab)->type = integer;
@@ -1530,7 +1530,7 @@ yyreduce:
     break;
 
   case 23:
-#line 237 "tinyC.y" /* yacc.c:1646  */
+#line 236 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = (yyvsp[0].symTab);
                                                 }
@@ -1538,7 +1538,7 @@ yyreduce:
     break;
 
   case 24:
-#line 242 "tinyC.y" /* yacc.c:1646  */
+#line 241 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = newTemp(theTable_p);
                                                       if((yyvsp[-2].symTab)->type == real){
@@ -1571,7 +1571,7 @@ yyreduce:
     break;
 
   case 25:
-#line 270 "tinyC.y" /* yacc.c:1646  */
+#line 269 "tinyC.y" /* yacc.c:1646  */
     {     
                                                       (yyval.symTab) = newTemp(theTable_p);
                                                       if((yyvsp[-2].symTab)->type == real){
@@ -1603,7 +1603,7 @@ yyreduce:
     break;
 
   case 26:
-#line 297 "tinyC.y" /* yacc.c:1646  */
+#line 296 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = (yyvsp[0].symTab);
                                                 }
@@ -1611,7 +1611,7 @@ yyreduce:
     break;
 
   case 27:
-#line 302 "tinyC.y" /* yacc.c:1646  */
+#line 301 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = newTemp(theTable_p);
                                                       if((yyvsp[-2].symTab)->type == real){
@@ -1643,7 +1643,7 @@ yyreduce:
     break;
 
   case 28:
-#line 329 "tinyC.y" /* yacc.c:1646  */
+#line 328 "tinyC.y" /* yacc.c:1646  */
     {     
                                                       (yyval.symTab) = newTemp(theTable_p);
                                                       if((yyvsp[-2].symTab)->type == real){
@@ -1677,7 +1677,7 @@ yyreduce:
     break;
 
   case 29:
-#line 358 "tinyC.y" /* yacc.c:1646  */
+#line 357 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = (yyvsp[0].symTab);
                                                 }
@@ -1685,7 +1685,7 @@ yyreduce:
     break;
 
   case 30:
-#line 363 "tinyC.y" /* yacc.c:1646  */
+#line 362 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = (yyvsp[-1].symTab);
 
@@ -1694,29 +1694,29 @@ yyreduce:
     break;
 
   case 31:
-#line 367 "tinyC.y" /* yacc.c:1646  */
+#line 366 "tinyC.y" /* yacc.c:1646  */
     {     
                                                       /* Add constants to the symbol table to ease the interpreter implementation */                                                 
                                                       union val value;
-                                                      value.i_value = (yyvsp[0].integer_value);                                                      
+                                                      value.i_value = (yyvsp[0].i);                                                      
                                                       (yyval.symTab) = newTempCons(theTable_p,value,integer);
                                                 }
 #line 1705 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 373 "tinyC.y" /* yacc.c:1646  */
+#line 372 "tinyC.y" /* yacc.c:1646  */
     {           
                                                       /* Add constants to the symbol table to ease the interpreter implementation */                                           
                                                       union val value;
-                                                      value.r_value = (yyvsp[0].float_value);                                                      
+                                                      value.r_value = (yyvsp[0].f);                                                      
                                                       (yyval.symTab) = newTempCons(theTable_p,value,real);
                                                 }
 #line 1716 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 379 "tinyC.y" /* yacc.c:1646  */
+#line 378 "tinyC.y" /* yacc.c:1646  */
     {
                                                       (yyval.symTab) = (yyvsp[0].symTab);
                                                 }
@@ -1724,12 +1724,12 @@ yyreduce:
     break;
 
   case 34:
-#line 384 "tinyC.y" /* yacc.c:1646  */
+#line 383 "tinyC.y" /* yacc.c:1646  */
     {
                                                       /* Check if the variable is in the symbol table */
-                                                      entry_p node = SymLookUp(theTable_p,(yyvsp[0].string_value));
+                                                      entry_p node = SymLookUp(theTable_p,(yyvsp[0].s));
                                                       if(node == NULL){
-                                                            printf("\nWarning! In line %d: Undeclared variable %s\n",yylineno,(yyvsp[0].string_value));                                                            
+                                                            printf("\nWarning! In line %d: Undeclared variable %s\n",yylineno,(yyvsp[0].s));                                                            
                                                       }else{
                                                             (yyval.symTab) = node;
                                                       }
@@ -1966,7 +1966,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 396 "tinyC.y" /* yacc.c:1906  */
+#line 395 "tinyC.y" /* yacc.c:1906  */
 
 #include"lex.yy.c"
 void yyerror(char *s) {

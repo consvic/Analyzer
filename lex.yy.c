@@ -968,20 +968,20 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 #line 77 "Scanner.l"
-{ 	yylval.float_value = atof (yytext);
+{ 	yylval.f = atof (yytext);
 										return FLOAT_NUM; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 79 "Scanner.l"
-{ 	yylval.integer_value = atoi (yytext);
+{ 	yylval.i = atoi (yytext);
 										return INT_NUM; }
 	YY_BREAK
 /* Gramatica para identificadores */
 case 34:
 YY_RULE_SETUP
 #line 84 "Scanner.l"
-{ 	yylval.string_value = strdup(yytext);
+{ 	yylval.s = strdup(yytext);
 										return ID;}
 	YY_BREAK
 /* Gramatica para "Strings" */

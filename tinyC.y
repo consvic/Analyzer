@@ -21,17 +21,16 @@ void        yyerror(char *s);
 %}
 
 %union {
-   int          integer_value;
-   float        float_value;
-   char *       string_value;
-   entry_p      symTab;
-   GPtrArray *	list;
+    char *s;
+    float f;
+    int i;
+    entry_p  symTab;
+    GPtrArray *	list;
 }
 
-
-%token <string_value> ID
-%token <integer_value> INT_NUM
-%token <float_value> FLOAT_NUM
+%token <s> ID
+%token <i> INT_NUM
+%token <f> FLOAT_NUM
 %token SEMI
 %token COMA
 %token INTEGER
@@ -57,7 +56,7 @@ void        yyerror(char *s);
 %token TIMES 
 %token DIV
 
-%type <integer_value> type m
+%type <i> type m
 %type <symTab> variable factor term simple_exp exp stmt_seq block stmt
 %type <list> n
 
@@ -79,7 +78,7 @@ var_dec     : var_dec single_dec
 
 single_dec  : type ID SEMI                            {
                                                             if(SymLookUp(theTable_p,$2)!=NULL){
-                                                                  printf("\nWarning! In line %d: Variable %s already defined\n",yylineno,$2 );                                                                  
+                                                                  printf("\nWarning: In line %d: Variable %s already defined\n",yylineno,$2 );                                                                  
                                                             }else{
                                                                   SymInsert(theTable_p,$2,$1);
                                                             }
@@ -123,22 +122,19 @@ stmt        : IF exp THEN m stmt                {
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));                  
                                                 }
             | variable ASSIGN exp SEMI          {
-                                                      
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                     
                                                       
                                                       if($1->type == real){
                                                             if($3->type == real){
-                                                                  //SymUpdate(theTable_p,$1->name,$1->type,$3->value);                                                                  
+                                                                                                                              
                                                             }else{
                                                                   /* Coercion */
-                                                                  printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  printf("\nInfo. Coercion performed:  line %d passing integer to float\n",yylineno );
                                                                   //SymUpdate(theTable_p,$1->name,real,$3->value);
                                                             }
                                                       }else{
                                                             if($3->type == real){
-                                                                  printf("\nWarning! In line %d: Incompatible types, passing float to int\n",yylineno );
-                                                            }else{
-                                                                  //SymUpdate(theTable_p,$1->name,$1->type,$3->value);
+                                                                  printf("\nWarning:  line %d: Incompatible types, passing float to int\n",yylineno );
                                                             }
                                                       }
                                                       union result res;
@@ -172,16 +168,16 @@ stmt        : IF exp THEN m stmt                {
             ;
             
 m           :						{          
-                                                      /* Get the actual address in the code to perform the backpatch*/
+                                                     
 									$$ = code->len;
 								}
             ;
 n           : ELSE 					{
 									$$ = newList(code->len);
 
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      /*
 									union result res;
-									res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+									res.address = 0;
 									g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
 								}
             ;
@@ -196,13 +192,13 @@ exp         : simple_exp LT simple_exp          {
                                                       $$->list_true = newList(code->len);                                                      
                                                       $$->list_false = newList(code->len+1); 
 
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      
                                                       union result res;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0;
                                                       g_ptr_array_add(code,newQuad("LT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0;
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
                                                 }
             | simple_exp EQ simple_exp          {
@@ -210,13 +206,13 @@ exp         : simple_exp LT simple_exp          {
                                                       $$->list_true = newList(code->len);
                                                       $$->list_false = newList(code->len+1);
 
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                     
                                                       union result res;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0;
                                                       g_ptr_array_add(code,newQuad("EQ",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0;
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
                                                 }
             | simple_exp GT simple_exp          {
@@ -225,13 +221,13 @@ exp         : simple_exp LT simple_exp          {
                                                       $$->list_true = newList(code->len);
                                                       $$->list_false = newList(code->len+1);
 
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                    
                                                       union result res;
-                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0; 
                                                       g_ptr_array_add(code,newQuad("GT",res,$1,$3));
 
                                                       union result res2;
-                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      res.address = 0; 
                                                       g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
                                                 }
             | simple_exp                        {
@@ -247,21 +243,21 @@ simple_exp  : simple_exp PLUS term              {
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            	printf("\nInfo. Coercion performed:  line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                       }
                                                       else{
                                                             if($3->type==real){
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            	printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                 $$->type = real;
                                                             }
                                                             else{
                                                                   $$->type = integer;
                                                             }
                                                       }                                                                                                            
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                    
                                                       union result res;
                                                       res.entry = $$;
                                                       g_ptr_array_add(code,newQuad("sum",res,$1,$3));
@@ -275,21 +271,21 @@ simple_exp  : simple_exp PLUS term              {
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            	printf("\nInfo. Coercion performed:  line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                       }
                                                       else{
                                                             if($3->type==real){
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            	printf("\nInfo. Coercion performed:  line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                             else{
                                                                   $$->type = integer;
                                                             }
                                                       }
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                     
                                                       union result res;
                                                       res.entry = $$;
                                                       g_ptr_array_add(code,newQuad("minus",res,$1,$3));
@@ -307,21 +303,21 @@ term        : term TIMES factor                 {
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            	printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                       }
                                                       else{
                                                             if($3->type==real){
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            		printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                             else{
                                                                   $$->type = integer;
                                                             }
                                                       }
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                     
                                                       union result res;
                                                       res.entry = $$;
                                                       g_ptr_array_add(code,newQuad("mult",res,$1,$3));
@@ -334,23 +330,23 @@ term        : term TIMES factor                 {
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            		printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                       }
                                                       else{
                                                             if($3->type==real){
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            		printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                            		printf("\nInfo. Coercion performed: line %d passing integer to float\n",yylineno );
                                                                   $$->type = real;
                                                             }
                                                       }   
-                                                      /* Place the "code" generated in the array that represents the memory */
+                                                    
                                                       union result res;
                                                       res.entry = $$;
                                                       g_ptr_array_add(code,newQuad("div",res,$1,$3));
@@ -365,13 +361,13 @@ factor      : LPAREN exp RPAREN                 {
 
                                                 }
             | INT_NUM                           {     
-                                                      /* Add constants to the symbol table to ease the interpreter implementation */                                                 
+                                                                                         
                                                       union val value;
                                                       value.i_value = $1;                                                      
                                                       $$ = newTempCons(theTable_p,value,integer);
                                                 }
             | FLOAT_NUM                         {           
-                                                      /* Add constants to the symbol table to ease the interpreter implementation */                                           
+                                                                                      
                                                       union val value;
                                                       value.r_value = $1;                                                      
                                                       $$ = newTempCons(theTable_p,value,real);
@@ -382,10 +378,10 @@ factor      : LPAREN exp RPAREN                 {
             ;
 
 variable    : ID                                {
-                                                      /* Check if the variable is in the symbol table */
+                                                    /
                                                       entry_p node = SymLookUp(theTable_p,$1);
                                                       if(node == NULL){
-                                                            printf("\nWarning! In line %d: Undeclared variable %s\n",yylineno,$1);                                                            
+                                                             printf("Error! In line %d: Undeclared variable %s\n",lineNum,$1);                                                        
                                                       }else{
                                                             $$ = node;
                                                       }
@@ -404,13 +400,15 @@ int main()
 {
 	
 
-            /*
-            *Asiganamos la tabla de simbolos
-            */
+     /***********************************************************
+      *     Creamos la Tabla de Symbolos       *
+      ************************************************************/  
+      
             theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal,NULL,(GDestroyNotify)FreeItem);
-            /*
-            * Aqui asignamos los Quads
-            */
+            
+     /***********************************************************
+      *    Asignamos los Quads      *
+      ************************************************************/  
             code = g_ptr_array_new();            
                 
       	if(!yyparse())
@@ -418,29 +416,25 @@ int main()
 		else
 			printf("\nFallo el Parseo\n");
 	
-        /***********************************************************
+        /*********************************************************************************************
       *    Mandamos a llamar la funcion interprete que toma la tabla de symbolos y los quads generados      *
-      ************************************************************/
-
-   
-      interprete(theTable_p,code); 
-
-
-
+      ************************************************************************************************/   
+      
+            interprete(theTable_p,code); 
+            
       /***********************************************************
       *     Aqui veremos los quads y la tabla de symbolos       *
-      ************************************************************/
+      ************************************************************/  
       
-	PrintCode(code);
-	printf("\nValue of integer: %d\nValue of real: %d\n",integer,real);
-	PrintTable(theTable_p);
-
-    /***********************************************************
+            PrintCode(code);
+            PrintTable(theTable_p);
+            
+     /***********************************************************
       *   Liberamos Memoria usada por la tabla de simbolos     *
       ************************************************************/
 
-	g_hash_table_destroy(theTable_p);
-	return EXIT_SUCCESS;
+            g_hash_table_destroy(theTable_p);
+            return EXIT_SUCCESS;
 }
          
    
