@@ -9,7 +9,7 @@ Compilacion
 
 * flex Scanner.l 				-.Genera el archivo lex.yy.c
 * bison tinyC.y 				-.Genera el archivo tinyC.tab.c
-* gcc tinyC.tab.c -o "Nombre del ejecutable" -lfl
+*gcc -o "Nombre" tinyC.tab.c UserDefined.c `pkg-config --cflags --libs glib-2.0` -lfl
 * ./"Nombre del ejecutable" < "Archivos de Prueba"(test1.txt,test2.txt,test3.txt,test4.txt)
 	
 

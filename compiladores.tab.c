@@ -64,35 +64,27 @@
 /* Copy the first part of user declarations.  */
 #line 1 "tinyC.y" /* yacc.c:339  */
 
-
   /*
   Allan Francisco Julian Novoa A01361651
   Cesar Guadarrama cantu A01364853
   Constanza Lievanos Sanchez A01361015
 
+
   */
-#include <glib.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <glib.h>
 #include "UserDefined.h"
-#include "types.h"
-extern int lineNum;
 
-  /* Declaramos las Funciones */
-  
-void yyerror (GHashTable * theTable_p, const char* const message);
+GHashTable *      theTable_p;		
+GPtrArray *          code;		
 
-/*
-Variables para saber si hubo error de que no se delcaro una variable
-*/
-int x = 0;
-//int varError =  0;
-
-void typeError();
+extern int  yylineno;
+void        yyerror(char *s);
 
 
-#line 96 "compiladores.tab.c" /* yacc.c:339  */
+#line 88 "compiladores.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -125,33 +117,32 @@ extern int yydebug;
   enum yytokentype
   {
     ID = 258,
-    SEMI = 259,
-    INTEGER = 260,
-    FLOAT = 261,
+    INT_NUM = 259,
+    FLOAT_NUM = 260,
+    SEMI = 261,
     COMA = 262,
-    IF = 263,
-    THEN = 264,
-    ELSE = 265,
-    WHILE = 266,
-    DO = 267,
-    ASSIGN = 268,
-    WRITE = 269,
-    READ = 270,
-    LPAREN = 271,
-    RPAREN = 272,
-    LBRACE = 273,
-    RBRACE = 274,
-    LT = 275,
-    GT = 276,
-    LE = 277,
-    GE = 278,
+    INTEGER = 263,
+    FLOAT = 264,
+    IF = 265,
+    THEN = 266,
+    ELSE = 267,
+    WHILE = 268,
+    DO = 269,
+    ASSIGN = 270,
+    WRITE = 271,
+    READ = 272,
+    LPAREN = 273,
+    RPAREN = 274,
+    LBRACE = 275,
+    RBRACE = 276,
+    LT = 277,
+    GT = 278,
     EQ = 279,
-    NE = 280,
-    LTEQ = 281,
-    PLUS = 282,
-    MINUS = 283,
-    TIMES = 284,
-    DIV = 285
+    LTEQ = 280,
+    PLUS = 281,
+    MINUS = 282,
+    TIMES = 283,
+    DIV = 284
   };
 #endif
 
@@ -160,14 +151,15 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 32 "tinyC.y" /* yacc.c:355  */
+#line 23 "tinyC.y" /* yacc.c:355  */
 
     char *s;
     float f;
     int i;
     entry_p  symTab;
+    GPtrArray *	list;
 
-#line 171 "compiladores.tab.c" /* yacc.c:355  */
+#line 163 "compiladores.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -178,13 +170,13 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
-int yyparse (GHashTable * theTable_p);
+int yyparse (void);
 
 
 
 /* Copy the second part of user declarations.  */
 
-#line 188 "compiladores.tab.c" /* yacc.c:358  */
+#line 180 "compiladores.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -429,18 +421,18 @@ union yyalloc
 #define YYLAST   70
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  31
+#define YYNTOKENS  30
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  13
+#define YYNNTS  15
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  35
+#define YYNRULES  34
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  70
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   285
+#define YYMAXUTOK   284
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -477,17 +469,17 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30
+      25,    26,    27,    28,    29
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    77,    77,    80,    81,    84,    99,   100,   103,   104,
-     107,   108,   109,   110,   130,   131,   132,   135,   138,   139,
-     140,   141,   142,   143,   144,   150,   175,   201,   207,   232,
-     259,   265,   269,   276,   283,   289
+       0,    72,    72,    75,    76,    79,    89,    90,    93,   100,
+     105,   110,   116,   124,   150,   159,   168,   173,   178,   188,
+     193,   207,   221,   236,   241,   269,   296,   301,   328,   357,
+     362,   366,   372,   378,   383
 };
 #endif
 
@@ -496,12 +488,12 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "ID", "SEMI", "INTEGER", "FLOAT", "COMA",
-  "IF", "THEN", "ELSE", "WHILE", "DO", "ASSIGN", "WRITE", "READ", "LPAREN",
-  "RPAREN", "LBRACE", "RBRACE", "LT", "GT", "LE", "GE", "EQ", "NE", "LTEQ",
-  "PLUS", "MINUS", "TIMES", "DIV", "$accept", "program", "var_dec",
-  "single_dec", "type", "stmt_seq", "stmt", "block", "exp", "simple_exp",
-  "term", "factor", "variable", YY_NULLPTR
+  "$end", "error", "$undefined", "ID", "INT_NUM", "FLOAT_NUM", "SEMI",
+  "COMA", "INTEGER", "FLOAT", "IF", "THEN", "ELSE", "WHILE", "DO",
+  "ASSIGN", "WRITE", "READ", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LT",
+  "GT", "EQ", "LTEQ", "PLUS", "MINUS", "TIMES", "DIV", "$accept",
+  "program", "var_dec", "single_dec", "type", "stmt_seq", "stmt", "m", "n",
+  "block", "exp", "simple_exp", "term", "factor", "variable", YY_NULLPTR
 };
 #endif
 
@@ -512,15 +504,14 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284
 };
 # endif
 
-#define YYPACT_NINF -34
+#define YYPACT_NINF -48
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-34)))
+  (!!((Yystate) == (-48)))
 
 #define YYTABLE_NINF -1
 
@@ -531,13 +522,13 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -34,     6,    -1,   -34,   -34,   -34,   -34,    10,    17,    -2,
-     -34,    33,    33,     5,    30,   -34,   -34,   -34,     3,   -34,
-     -34,   -34,    33,    25,    20,   -20,   -34,   -34,    49,    33,
-      59,     0,    33,    46,    17,    33,    33,    33,    33,    33,
-      33,    33,    33,    33,    33,    17,    47,    48,   -34,    62,
-     -34,    57,     2,     2,     2,     2,     2,     2,   -20,   -20,
-     -34,   -34,   -34,    64,    65,   -34,    17,   -34,   -34,   -34
+     -48,     9,    30,   -48,   -48,   -48,   -48,    22,    16,    10,
+     -48,     0,   -48,    29,    37,   -48,   -48,   -48,    25,   -48,
+     -48,   -48,     0,    45,   -16,    17,   -48,   -48,     0,     0,
+      54,    14,   -48,     0,    39,   -48,     0,     0,     0,     0,
+       0,     0,     0,    49,    40,    46,   -48,    58,   -48,    16,
+      23,    23,    23,    17,    17,   -48,   -48,   -48,    60,    61,
+     -48,    56,    16,   -48,   -48,   -48,   -48,   -48,    16,   -48
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -546,26 +537,26 @@ static const yytype_int8 yypact[] =
 static const yytype_uint8 yydefact[] =
 {
        4,     0,     9,     1,     6,     7,     3,     0,     2,     0,
-      35,     0,     0,     0,     0,     9,     8,    16,     0,     5,
-      32,    33,     0,     0,    24,    27,    30,    34,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    17,     0,
-      31,    10,    18,    20,    22,    21,    19,    23,    25,    26,
-      28,    29,    12,     0,     0,    13,     0,    15,    14,    11
+      34,     0,    17,     0,     0,     9,    17,    16,     0,     5,
+      31,    32,     0,     0,    23,    26,    29,    33,     0,     0,
+       0,     0,     8,     0,     0,    17,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    19,     0,    30,     0,
+      20,    22,    21,    24,    25,    27,    28,    17,     0,     0,
+      13,    10,     0,    15,    14,    18,    17,    12,     0,    11
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -34,   -34,   -34,   -34,   -34,    55,   -33,   -34,    -5,    15,
-      18,    13,    -8
+     -48,   -48,   -48,   -48,   -48,    55,   -47,   -15,   -48,   -48,
+      15,   -24,    13,    20,    -8
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     2,     6,     7,     8,    16,    17,    23,    24,
-      25,    26,    27
+      -1,     1,     2,     6,     7,     8,    16,    28,    66,    17,
+      23,    24,    25,    26,    27
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -573,25 +564,25 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      18,    51,    19,    10,     4,     5,     3,    28,    11,    43,
-      44,    12,    62,     9,    13,    14,    32,    33,    15,    48,
-      10,    29,    47,    18,    46,    11,    18,    49,    12,    41,
-      42,    13,    14,    69,    34,    15,    10,    18,    20,    21,
-      35,    36,    37,    38,    39,    40,    30,    41,    42,    22,
-      52,    53,    54,    55,    56,    57,    60,    61,    18,    58,
-      59,    45,    10,    50,    63,    64,    65,    66,    67,    68,
+      18,    32,    61,    10,    20,    21,    36,    37,    38,     3,
+      39,    40,    50,    51,    52,    67,    19,    10,    22,    10,
+      49,    69,    45,    18,    11,     9,    11,    12,     0,    12,
+      13,    14,    13,    14,    15,    46,    15,    34,     4,     5,
+      33,    18,    62,    43,    44,    41,    42,    29,    47,    39,
+      40,    68,    53,    54,    18,    30,    35,    10,    48,    58,
+      18,    55,    56,    57,    60,    59,    63,    64,    65,     0,
       31
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-       8,    34,     4,     3,     5,     6,     0,    12,     8,    29,
-      30,    11,    45,     3,    14,    15,    13,    22,    18,    19,
-       3,    16,    30,    31,    29,     8,    34,    32,    11,    27,
-      28,    14,    15,    66,     9,    18,     3,    45,     5,     6,
-      20,    21,    22,    23,    24,    25,    16,    27,    28,    16,
-      35,    36,    37,    38,    39,    40,    43,    44,    66,    41,
-      42,    12,     3,    17,    17,    17,     4,    10,     4,     4,
+       8,    16,    49,     3,     4,     5,    22,    23,    24,     0,
+      26,    27,    36,    37,    38,    62,     6,     3,    18,     3,
+      35,    68,    30,    31,    10,     3,    10,    13,    -1,    13,
+      16,    17,    16,    17,    20,    21,    20,    22,     8,     9,
+      15,    49,    57,    28,    29,    28,    29,    18,    33,    26,
+      27,    66,    39,    40,    62,    18,    11,     3,    19,    19,
+      68,    41,    42,    14,     6,    19,     6,     6,    12,    -1,
       15
 };
 
@@ -599,31 +590,31 @@ static const yytype_uint8 yycheck[] =
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    32,    33,     0,     5,     6,    34,    35,    36,     3,
-       3,     8,    11,    14,    15,    18,    37,    38,    43,     4,
-       5,     6,    16,    39,    40,    41,    42,    43,    39,    16,
-      16,    36,    13,    39,     9,    20,    21,    22,    23,    24,
-      25,    27,    28,    29,    30,    12,    39,    43,    19,    39,
-      17,    37,    40,    40,    40,    40,    40,    40,    41,    41,
-      42,    42,    37,    17,    17,     4,    10,     4,     4,    37
+       0,    31,    32,     0,     8,     9,    33,    34,    35,     3,
+       3,    10,    13,    16,    17,    20,    36,    39,    44,     6,
+       4,     5,    18,    40,    41,    42,    43,    44,    37,    18,
+      18,    35,    37,    15,    40,    11,    22,    23,    24,    26,
+      27,    28,    29,    40,    40,    44,    21,    40,    19,    37,
+      41,    41,    41,    42,    42,    43,    43,    14,    19,    19,
+       6,    36,    37,     6,     6,    12,    38,    36,    37,    36
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    31,    32,    33,    33,    34,    35,    35,    36,    36,
-      37,    37,    37,    37,    37,    37,    37,    38,    39,    39,
-      39,    39,    39,    39,    39,    40,    40,    40,    41,    41,
-      41,    42,    42,    42,    42,    43
+       0,    30,    31,    32,    32,    33,    34,    34,    35,    35,
+      36,    36,    36,    36,    36,    36,    36,    37,    38,    39,
+      40,    40,    40,    40,    41,    41,    41,    42,    42,    42,
+      43,    43,    43,    43,    44
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     2,     0,     3,     1,     1,     2,     0,
-       4,     6,     4,     4,     5,     5,     1,     3,     3,     3,
-       3,     3,     3,     3,     1,     3,     3,     1,     3,     3,
-       1,     3,     1,     1,     1,     1
+       0,     2,     2,     2,     0,     3,     1,     1,     3,     0,
+       5,     8,     6,     4,     5,     5,     1,     0,     1,     3,
+       3,     3,     3,     1,     3,     3,     1,     3,     3,     1,
+       3,     1,     1,     1,     1
 };
 
 
@@ -651,7 +642,7 @@ do                                                              \
     }                                                           \
   else                                                          \
     {                                                           \
-      yyerror (theTable_p, YY_("syntax error: cannot back up")); \
+      yyerror (YY_("syntax error: cannot back up")); \
       YYERROR;                                                  \
     }                                                           \
 while (0)
@@ -688,7 +679,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Type, Value, theTable_p); \
+                  Type, Value); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -699,11 +690,10 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, GHashTable * theTable_p)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
-  YYUSE (theTable_p);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -719,12 +709,12 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, GHashTable * theTable_p)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, theTable_p);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -757,7 +747,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, GHashTable * theTable_p)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
 {
   unsigned long int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -771,7 +761,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, GHashTable * t
       yy_symbol_print (stderr,
                        yystos[yyssp[yyi + 1 - yynrhs]],
                        &(yyvsp[(yyi + 1) - (yynrhs)])
-                                              , theTable_p);
+                                              );
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -779,7 +769,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, GHashTable * t
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule, theTable_p); \
+    yy_reduce_print (yyssp, yyvsp, Rule); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1037,10 +1027,9 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, GHashTable * theTable_p)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
 {
   YYUSE (yyvaluep);
-  YYUSE (theTable_p);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
@@ -1067,7 +1056,7 @@ int yynerrs;
 `----------*/
 
 int
-yyparse (GHashTable * theTable_p)
+yyparse (void)
 {
     int yystate;
     /* Number of tokens to shift before error messages enabled.  */
@@ -1302,261 +1291,454 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 77 "tinyC.y" /* yacc.c:1646  */
-    { printf ("No errors in the line\n");}
-#line 1308 "compiladores.tab.c" /* yacc.c:1646  */
+#line 72 "tinyC.y" /* yacc.c:1646  */
+    { printf ("No syntax errors \n");}
+#line 1297 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 85 "tinyC.y" /* yacc.c:1646  */
+#line 79 "tinyC.y" /* yacc.c:1646  */
     {
-              												if(SymbolLookUp(theTable_p,(yyvsp[-1].s))!=NULL) {
-              												printf("\nWarning! In line %d: Variable %s already defined\n",lineNum,(yyvsp[-1].s) );
-              												} else {
-
-              												  InsertSymbol(theTable_p,(yyvsp[-1].s),(yyvsp[-2].i),lineNum);
-              														/*entry_p      node_p;
-              														node_p = malloc(sizeof(entry_p));
-              														node_p = NewItem($2, $1, lineNum);
-              														g_hash_table_insert(theTable_p, node_p->name_p, node_p);*/
-              												}
-              										}
-#line 1325 "compiladores.tab.c" /* yacc.c:1646  */
+                                                            if(SymLookUp(theTable_p,(yyvsp[-1].s))!=NULL){
+                                                                  printf("\nWarning! In line %d: Variable %s already defined\n",yylineno,(yyvsp[-1].s) );                                                                  
+                                                            }else{
+                                                                  SymInsert(theTable_p,(yyvsp[-1].s),(yyvsp[-2].i));
+                                                            }
+                                                      }
+#line 1309 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 99 "tinyC.y" /* yacc.c:1646  */
-    { (yyval.i) = integer;}
-#line 1331 "compiladores.tab.c" /* yacc.c:1646  */
+#line 89 "tinyC.y" /* yacc.c:1646  */
+    {(yyval.i) = integer;}
+#line 1315 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
+#line 90 "tinyC.y" /* yacc.c:1646  */
+    {(yyval.i) = real;}
+#line 1321 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 93 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));     
+                                                      
+                                                               
+                                                      (yyval.symTab)->list_next = cloneList((yyvsp[-1].symTab)->list_next);                                                      
+                                                      backPatch(code,(yyvsp[-1].symTab)->list_next,(yyvsp[0].i));
+                                                }
+#line 1333 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
 #line 100 "tinyC.y" /* yacc.c:1646  */
-    { (yyval.i) = real;}
-#line 1337 "compiladores.tab.c" /* yacc.c:1646  */
+    {                                                      
+                                                      
+                                                }
+#line 1341 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 105 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));
+                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].i));
+                                                      (yyval.symTab)->list_next = mergeList((yyvsp[-3].symTab)->list_false,(yyvsp[0].symTab)->list_next);
+                                                }
+#line 1351 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 110 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));
+                                                      backPatch(code,(yyvsp[-6].symTab)->list_true,(yyvsp[-4].i));
+                                                      backPatch(code,(yyvsp[-6].symTab)->list_false,(yyvsp[-1].i));
+                                                      (yyval.symTab)->list_next=mergeList((yyvsp[-3].symTab)->list_next,mergeList((yyvsp[-2].list),(yyvsp[0].symTab)->list_next));
+                                                }
+#line 1362 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 12:
+#line 116 "tinyC.y" /* yacc.c:1646  */
+    {     
+                                                      backPatch(code,(yyvsp[-3].symTab)->list_true,(yyvsp[-1].i));
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));                                                      
+                                                      (yyval.symTab)->list_next = cloneList((yyvsp[-3].symTab)->list_false);                                                      
+                                                      union result res;
+                                                      res.address = (yyvsp[-4].i);
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));                  
+                                                }
+#line 1375 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 111 "tinyC.y" /* yacc.c:1646  */
+#line 124 "tinyC.y" /* yacc.c:1646  */
     {
-                                            printf("Linea %d con tipos %d %d\n",lineNum, (yyvsp[-3].symTab)->type, (yyvsp[-1].symTab)->type);
-
-                                                if(((yyvsp[-3].symTab)->type == real) && ((yyvsp[-1].symTab)->type == integer)) {
-                                                    /*Aqui se hace la coersion*/
-                                                    printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                    (yyvsp[-1].symTab)->type = real;
-                                                      /*Pegar codigo*/
-                                                } else  if(((yyvsp[-3].symTab)->type == real) && ((yyvsp[-1].symTab)->type == real)) {
-                                                            /*Pegar codigo*/
-                                                         } else  if(((yyvsp[-3].symTab)->type == integer)&& ((yyvsp[-1].symTab)->type == integer)) {
-                                                                /*Pegar codigo*/
-                                                             } else {
-                                                               /*Si la variable es integer y la expresión float hay un type error*/
-                                                                 typeError();
-                                                             }
-
-
-                                        }
-#line 1361 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      
+                                                      if((yyvsp[-3].symTab)->type == real){
+                                                            if((yyvsp[-1].symTab)->type == real){
+                                                                  //SymUpdate(theTable_p,$1->name,$1->type,$3->value);                                                                  
+                                                            }else{
+                                                                  /* Coercion */
+                                                                  printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  //SymUpdate(theTable_p,$1->name,real,$3->value);
+                                                            }
+                                                      }else{
+                                                            if((yyvsp[-1].symTab)->type == real){
+                                                                  printf("\nWarning! In line %d: Incompatible types, passing float to int\n",yylineno );
+                                                            }else{
+                                                                  //SymUpdate(theTable_p,$1->name,$1->type,$3->value);
+                                                            }
+                                                      }
+                                                      union result res;
+                                                      res.entry = (yyvsp[-3].symTab);
+                                                      g_ptr_array_add(code,newQuad("assign",res,(yyvsp[-1].symTab),NULL));                                                      
+                                                      
+                                                      (yyval.symTab)->list_next = g_ptr_array_new();   
+                                                          
+                                                }
+#line 1406 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 145 "tinyC.y" /* yacc.c:1646  */
+  case 14:
+#line 150 "tinyC.y" /* yacc.c:1646  */
     {
-                  											(yyval.symTab) = (yyvsp[0].symTab);
-                  										}
-#line 1369 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      union result resWrite;
+                                                      resWrite.entry = (yyvsp[-2].symTab);
+                                                      g_ptr_array_add(code,newQuad("read",resWrite,NULL,NULL));
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));
+                                                      (yyval.symTab)->list_next = g_ptr_array_new();
+                                                      
+                                                      
+                                                }
+#line 1420 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 25:
-#line 151 "tinyC.y" /* yacc.c:1646  */
+  case 15:
+#line 159 "tinyC.y" /* yacc.c:1646  */
     {
-
-                                                      if((yyvsp[-2].symTab)->type == real){
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                                  (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                                  (yyval.symTab)->type = real;
-                                                            }
-                                                      }
-                                                      else{
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                              (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                                  (yyval.symTab)->type = integer;
-                                                            }
-                                                      }
-                                          }
-#line 1397 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      union result resRead;
+                                                      resRead.entry = (yyvsp[-2].symTab);                                                                                                      
+                                                      g_ptr_array_add(code,newQuad("write",resRead,NULL,NULL)); 
+                                                      (yyval.symTab) = malloc(sizeof(entry_p));
+                                                      (yyval.symTab)->list_next = g_ptr_array_new();
+                                                                                                           
+                                                      
+                                                }
+#line 1434 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 26:
-#line 176 "tinyC.y" /* yacc.c:1646  */
-    {
-
-                                                      if((yyvsp[-2].symTab)->type == real){
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                                  (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                                (yyval.symTab)->type = real;
-                                                            }
-                                                      }
-                                                      else{
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                              (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                                  (yyval.symTab)->type = integer;
-                                                            }
-                                                      }
-
-
-                                          }
-#line 1427 "compiladores.tab.c" /* yacc.c:1646  */
+  case 16:
+#line 168 "tinyC.y" /* yacc.c:1646  */
+    {                                                      
+                                                      (yyval.symTab) = (yyvsp[0].symTab);
+                                                }
+#line 1442 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 27:
-#line 202 "tinyC.y" /* yacc.c:1646  */
-    {
-                    												(yyval.symTab) = (yyvsp[0].symTab);
-                    											}
-#line 1435 "compiladores.tab.c" /* yacc.c:1646  */
+  case 17:
+#line 173 "tinyC.y" /* yacc.c:1646  */
+    {          
+                                                      /* Get the actual address in the code to perform the backpatch*/
+									(yyval.i) = code->len;
+								}
+#line 1451 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 28:
-#line 208 "tinyC.y" /* yacc.c:1646  */
+  case 18:
+#line 178 "tinyC.y" /* yacc.c:1646  */
     {
-                                                      if((yyvsp[-2].symTab)->type == real){
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                                  (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                                (yyval.symTab)->type = real;
-                                                            }
-                                                      }
-                                                      else{
-                                                            if((yyvsp[0].symTab)->type==real){
-                                                            	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                              (yyval.symTab)->type = real;
-                                                            }
-                                                            else{
-                                                                  (yyval.symTab)->type = integer;
-                                                            }
-                                                      }
+									(yyval.list) = newList(code->len);
 
-
-                                          }
+                                                      /* Place the "code" generated in the array that represents the memory */
+									union result res;
+									res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+									g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+								}
 #line 1464 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
-  case 29:
-#line 233 "tinyC.y" /* yacc.c:1646  */
+  case 19:
+#line 188 "tinyC.y" /* yacc.c:1646  */
+    {                                                          
+                                                      (yyval.symTab) = (yyvsp[-1].symTab);                                                      
+                                                }
+#line 1472 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 193 "tinyC.y" /* yacc.c:1646  */
+    {                                                      
+                                                      (yyval.symTab)->type = integer;
+                                                      (yyval.symTab)->list_true = newList(code->len);                                                      
+                                                      (yyval.symTab)->list_false = newList(code->len+1); 
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("LT",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+
+                                                      union result res2;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
+#line 1491 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 21:
+#line 207 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab)->type = integer;
+                                                      (yyval.symTab)->list_true = newList(code->len);
+                                                      (yyval.symTab)->list_false = newList(code->len+1);
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("EQ",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+
+                                                      union result res2;
+                                                      res.address = 0;/* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
+#line 1510 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 221 "tinyC.y" /* yacc.c:1646  */
     {
 
+                                                      (yyval.symTab)->type = integer;
+                                                      (yyval.symTab)->list_true = newList(code->len);
+                                                      (yyval.symTab)->list_false = newList(code->len+1);
+
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("GT",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+
+                                                      union result res2;
+                                                      res.address = 0; /* Any address is ok, it will be replaced during backpatch*/
+                                                      g_ptr_array_add(code,newQuad("jump",res,NULL,NULL));
+                                                }
+#line 1530 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 236 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = (yyvsp[0].symTab);
+                                                }
+#line 1538 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 24:
+#line 241 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = newTemp(theTable_p);
                                                       if((yyvsp[-2].symTab)->type == real){
                                                             if((yyvsp[0].symTab)->type==real){
                                                                   (yyval.symTab)->type = real;
                                                             }
                                                             else{
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                              (yyval.symTab)->type = real;
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
                                                             }
                                                       }
                                                       else{
                                                             if((yyvsp[0].symTab)->type==real){
                                                             	/* Coercion */
-                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
-                                                              (yyval.symTab)->type = real;
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                (yyval.symTab)->type = real;
                                                             }
                                                             else{
-                                                                  printf("\nInfo. Coercion performed at line %d passing integer to float\n",lineNum );
+                                                                  (yyval.symTab)->type = integer;
+                                                            }
+                                                      }                                                                                                            
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.entry = (yyval.symTab);
+                                                      g_ptr_array_add(code,newQuad("sum",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+                                                      
+                                                }
+#line 1571 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 25:
+#line 269 "tinyC.y" /* yacc.c:1646  */
+    {     
+                                                      (yyval.symTab) = newTemp(theTable_p);
+                                                      if((yyvsp[-2].symTab)->type == real){
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
                                                                   (yyval.symTab)->type = real;
                                                             }
                                                       }
+                                                      else{
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                                  (yyval.symTab)->type = integer;
+                                                            }
+                                                      }
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.entry = (yyval.symTab);
+                                                      g_ptr_array_add(code,newQuad("minus",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+                                                }
+#line 1603 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
 
+  case 26:
+#line 296 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = (yyvsp[0].symTab);
+                                                }
+#line 1611 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
 
-                                          }
-#line 1495 "compiladores.tab.c" /* yacc.c:1646  */
+  case 27:
+#line 301 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = newTemp(theTable_p);
+                                                      if((yyvsp[-2].symTab)->type == real){
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                      }
+                                                      else{
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                                  (yyval.symTab)->type = integer;
+                                                            }
+                                                      }
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.entry = (yyval.symTab);
+                                                      g_ptr_array_add(code,newQuad("mult",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+                                                }
+#line 1643 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 28:
+#line 328 "tinyC.y" /* yacc.c:1646  */
+    {     
+                                                      (yyval.symTab) = newTemp(theTable_p);
+                                                      if((yyvsp[-2].symTab)->type == real){
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                      }
+                                                      else{
+                                                            if((yyvsp[0].symTab)->type==real){
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                            else{
+                                                            	/* Coercion */
+                                                            	printf("\nInfo. Coercion performed at line %d passing integer to float\n",yylineno );
+                                                                  (yyval.symTab)->type = real;
+                                                            }
+                                                      }   
+                                                      /* Place the "code" generated in the array that represents the memory */
+                                                      union result res;
+                                                      res.entry = (yyval.symTab);
+                                                      g_ptr_array_add(code,newQuad("div",res,(yyvsp[-2].symTab),(yyvsp[0].symTab)));
+                                                }
+#line 1677 "compiladores.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 29:
+#line 357 "tinyC.y" /* yacc.c:1646  */
+    {
+                                                      (yyval.symTab) = (yyvsp[0].symTab);
+                                                }
+#line 1685 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 260 "tinyC.y" /* yacc.c:1646  */
+#line 362 "tinyC.y" /* yacc.c:1646  */
     {
-                    												(yyval.symTab) = (yyvsp[0].symTab);
-                    											}
-#line 1503 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      (yyval.symTab) = (yyvsp[-1].symTab);
+
+                                                }
+#line 1694 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 266 "tinyC.y" /* yacc.c:1646  */
-    {
-                    												(yyval.symTab) = (yyvsp[-1].symTab);
-                    											}
-#line 1511 "compiladores.tab.c" /* yacc.c:1646  */
+#line 366 "tinyC.y" /* yacc.c:1646  */
+    {     
+                                                      /* Add constants to the symbol table to ease the interpreter implementation */                                                 
+                                                      union val value;
+                                                      value.i_value = (yyvsp[0].i);                                                      
+                                                      (yyval.symTab) = newTempCons(theTable_p,value,integer);
+                                                }
+#line 1705 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 270 "tinyC.y" /* yacc.c:1646  */
-    {
-                    												/* Add constants to the symbol table to ease implementation */
-                    												union val value;
-                    												value.i_value = (yyvsp[0].i);
-                    												(yyval.symTab) = newTempConstant(theTable_p,value,integer);
-                    											}
-#line 1522 "compiladores.tab.c" /* yacc.c:1646  */
+#line 372 "tinyC.y" /* yacc.c:1646  */
+    {           
+                                                      /* Add constants to the symbol table to ease the interpreter implementation */                                           
+                                                      union val value;
+                                                      value.r_value = (yyvsp[0].f);                                                      
+                                                      (yyval.symTab) = newTempCons(theTable_p,value,real);
+                                                }
+#line 1716 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 277 "tinyC.y" /* yacc.c:1646  */
+#line 378 "tinyC.y" /* yacc.c:1646  */
     {
-                    												/* Add constants to the symbol table to ease implementation */
-                    												union val value;
-                    												value.r_value = (yyvsp[0].f);
-                    												(yyval.symTab) = newTempConstant(theTable_p,value,real);
-                    											}
-#line 1533 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      (yyval.symTab) = (yyvsp[0].symTab);
+                                                }
+#line 1724 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 284 "tinyC.y" /* yacc.c:1646  */
+#line 383 "tinyC.y" /* yacc.c:1646  */
     {
-                    												(yyval.symTab) = (yyvsp[0].symTab);
-                    											}
-#line 1541 "compiladores.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 35:
-#line 290 "tinyC.y" /* yacc.c:1646  */
-    {
-                                              /* Check if the variable is in the symbol table */
-                                              entry_p node = SymbolLookUp(theTable_p,(yyvsp[0].s));
-                                              if(node == NULL){ 
-                                                    x = 1;
-                                                    printf("Error! In line %d: Undeclared variable %s\n",lineNum,(yyvsp[0].s));
-                                              }else{
-                                                    (yyval.symTab) = node;
-                                              }
-                                        }
-#line 1556 "compiladores.tab.c" /* yacc.c:1646  */
+                                                      /* Check if the variable is in the symbol table */
+                                                      entry_p node = SymLookUp(theTable_p,(yyvsp[0].s));
+                                                      if(node == NULL){
+                                                            printf("\nWarning! In line %d: Undeclared variable %s\n",yylineno,(yyvsp[0].s));                                                            
+                                                      }else{
+                                                            (yyval.symTab) = node;
+                                                      }
+                                                }
+#line 1738 "compiladores.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1560 "compiladores.tab.c" /* yacc.c:1646  */
+#line 1742 "compiladores.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1606,7 +1788,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (theTable_p, YY_("syntax error"));
+      yyerror (YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
                                         yyssp, yytoken)
@@ -1633,7 +1815,7 @@ yyerrlab:
                 yymsgp = yymsg;
               }
           }
-        yyerror (theTable_p, yymsgp);
+        yyerror (yymsgp);
         if (yysyntax_error_status == 2)
           goto yyexhaustedlab;
       }
@@ -1657,7 +1839,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, theTable_p);
+                      yytoken, &yylval);
           yychar = YYEMPTY;
         }
     }
@@ -1713,7 +1895,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  yystos[yystate], yyvsp, theTable_p);
+                  yystos[yystate], yyvsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1750,7 +1932,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (theTable_p, YY_("memory exhausted"));
+  yyerror (YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1762,7 +1944,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, theTable_p);
+                  yytoken, &yylval);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1771,7 +1953,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  yystos[*yyssp], yyvsp, theTable_p);
+                  yystos[*yyssp], yyvsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1784,29 +1966,55 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 303 "tinyC.y" /* yacc.c:1906  */
+#line 395 "tinyC.y" /* yacc.c:1906  */
+
+#include"lex.yy.c"
+void yyerror(char *s) {
+      printf("In line %d: %s %s\n", yylineno, s, yytext );
+      exit(1);
+}  
+
+int main()
+{
+	
+
+            /*
+            *Asiganamos la tabla de simbolos
+            */
+            theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal,NULL,(GDestroyNotify)FreeItem);
+            /*
+            * Aqui asignamos los Quads
+            */
+            code = g_ptr_array_new();            
+                
+      	if(!yyparse())
+			printf("\nSe Parseo Correctamente\n");
+		else
+			printf("\nFallo el Parseo\n");
+	
+        /***********************************************************
+      *    Mandamos a llamar la funcion interprete que toma la tabla de symbolos y los quads generados      *
+      ************************************************************/
+
+   
+      interprete(theTable_p,code); 
 
 
-/*Incluimos a lex.yy.c*/
-#include "lex.yy.c"
 
-/* BISON DOES NOT IMPLEMENT YYERROR, SO DEFINE IT HERE */
-void yyerror (GHashTable * theTable_p, const char* const message){
-  printf ("%s in line %d\n",message,lineNum);
+      /***********************************************************
+      *     Aqui veremos los quads y la tabla de symbolos       *
+      ************************************************************/
+      
+	PrintCode(code);
+	printf("\nValue of integer: %d\nValue of real: %d\n",integer,real);
+	PrintTable(theTable_p);
+
+    /***********************************************************
+      *   Liberamos Memoria usada por la tabla de simbolos     *
+      ************************************************************/
+
+	g_hash_table_destroy(theTable_p);
+	return EXIT_SUCCESS;
 }
-void typeError(){
-    printf ("Type Error in line %d\n",lineNum);
-}
-
-/* BISON DOES NOT DEFINE THE MAIN ENTRY POINT SO DEFINE IT HERE */
-int main (){
-  GHashTable * theTable_p;
-  theTable_p = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)FreeItem);
-  yyparse(theTable_p);
-  if(x != 1)
-  {
-    PrintTable(theTable_p);
-  }
-
-  DestroyTable(theTable_p);
-}
+         
+   
