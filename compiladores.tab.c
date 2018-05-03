@@ -1300,7 +1300,7 @@ yyreduce:
 #line 79 "tinyC.y" /* yacc.c:1646  */
     {
                                                             if(SymLookUp(theTable_p,(yyvsp[-1].s))!=NULL){
-                                                                  printf("\nWarning! In line %d: Variable %s already defined\n",yylineno,(yyvsp[-1].s) );                                                                  
+                                                                  printf("\nWarning_ In line %d: Variable %s already defined\n",yylineno,(yyvsp[-1].s) );                                                                  
                                                             }else{
                                                                   SymInsert(theTable_p,(yyvsp[-1].s),(yyvsp[-2].i));
                                                             }
